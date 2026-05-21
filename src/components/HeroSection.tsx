@@ -56,8 +56,8 @@ export default function HeroSection() {
           healthier workplaces across Nairobi and beyond.
         </p>
 
-        <div style={{display:'flex',gap:'1rem',flexWrap:'wrap',marginBottom:'3rem'}}>
-          <Link href="/#booking" className="btn btn-primary">
+        <div className="hero-btn-container" style={{display:'flex',gap:'1rem',flexWrap:'wrap',marginBottom:'3rem'}}>
+          <Link href="#booking" className="btn btn-primary">
             <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/>
               <line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/>
               <line x1="3" y1="10" x2="21" y2="10"/>
@@ -71,11 +71,11 @@ export default function HeroSection() {
             </svg>
             WhatsApp Us
           </a>
-          <Link href="/#services" className="btn btn-outline">Our Services</Link>
+          <Link href="#services" className="btn btn-outline">Our Services</Link>
         </div>
 
         {/* Trust row */}
-        <div style={{display:'flex',alignItems:'center',gap:'1.5rem',
+        <div className="hero-trust-row" style={{display:'flex',alignItems:'center',gap:'1.5rem',
           paddingTop:'1.8rem',borderTop:'1px solid var(--border)'}}>
           <div style={{display:'flex'}}>
             {['AK','MN','JO'].map((i,idx)=>(

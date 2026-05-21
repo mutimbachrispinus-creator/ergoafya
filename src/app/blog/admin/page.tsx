@@ -90,19 +90,6 @@ export default function BlogAdminPage() {
   // Try auto-login on mount
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      // 1. Check if there's a key in the URL query string: ?key=XXXX
-      const params = new URLSearchParams(window.location.search)
-      const urlKey = params.get('key')
-      
-      if (urlKey) {
-        verifySecret(urlKey)
-        // Instantly clean up the URL bar to hide the key from browser history / bookmarks
-        const cleanUrl = window.location.pathname
-        window.history.replaceState({}, document.title, cleanUrl)
-        return
-      }
-
-      // 2. Otherwise fall back to persistent localStorage
       const savedSecret = localStorage.getItem('ergoafya_admin_secret')
       if (savedSecret) {
         verifySecret(savedSecret)

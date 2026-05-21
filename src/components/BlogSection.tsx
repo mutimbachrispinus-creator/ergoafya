@@ -59,7 +59,7 @@ export default function BlogSection() {
       </div>
 
       {/* Owner blog panel callout */}
-      <div style={{background:'var(--forest)',borderRadius:20,padding:'2.5rem',marginTop:'3rem',
+      <div className="admin-callout hide-mobile" style={{background:'var(--forest)',borderRadius:20,padding:'2.5rem',marginTop:'3rem',
         display:'grid',gridTemplateColumns:'1fr auto',gap:'2rem',alignItems:'center'}}
         >
         <div>
