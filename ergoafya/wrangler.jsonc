@@ -1,0 +1,23 @@
+{
+  // Cloudflare Workers config (used by @opennextjs/cloudflare)
+  "name": "ergoafya-solutions",
+  "main": ".open-next/worker.js",
+  "compatibility_date": "2025-04-01",       // IMPORTANT: must be 2025-04-01+ for process.env to work
+  "compatibility_flags": ["nodejs_compat"],  // Enables Node.js APIs in Workers
+
+  "assets": {
+    "directory": ".open-next/assets",
+    "binding": "ASSETS"
+  },
+
+  // Environment variables (set secrets via: wrangler secret put VAR_NAME)
+  "vars": {
+    "NEXT_PUBLIC_APP_URL": "https://ergoafya.com",
+    "NEXT_PUBLIC_AT_SENDER_ID": "ErgoAfya"
+  },
+
+  // KV namespace for blog post caching (optional, improves performance)
+  // "kv_namespaces": [
+  //   { "binding": "BLOG_CACHE", "id": "YOUR_KV_NAMESPACE_ID" }
+  // ]
+}

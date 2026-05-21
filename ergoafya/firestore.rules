@@ -1,0 +1,20 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Bookings: only backend (admin SDK) can write; no client reads
+    match /bookings/{bookingId} {
+      allow read: if false;
+      allow write: if false;
+    }
+    // Blog posts: anyone can read published posts
+    match /posts/{postId} {
+      allow read: if resource.data.published == true;
+      allow write: if false; // only via Admin SDK / Firebase Console
+    }
+    // Newsletter subscribers
+    match /subscribers/{subId} {
+      allow create: if request.resource.data.email is string;
+      allow read, update, delete: if false;
+    }
+  }
+}
