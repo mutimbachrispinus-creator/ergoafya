@@ -7,7 +7,7 @@ export default function HeroSection() {
       minHeight:'100vh', display:'grid', gridTemplateColumns:'1fr 1fr',
       alignItems:'center', padding:'100px 5vw 60px', gap:'5rem',
       position:'relative', overflow:'hidden', background:'var(--cream)',
-    }} className="hero-section">
+    }} className="hero-section hero-grid">
 
       {/* Background decorations */}
       <div style={{position:'absolute',inset:0,pointerEvents:'none'}}>

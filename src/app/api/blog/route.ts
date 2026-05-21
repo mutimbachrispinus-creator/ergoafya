@@ -10,42 +10,46 @@ const PostSchema = z.object({
   published: z.boolean().default(false),
 })
 
+async function isAuthorized(req: NextRequest): Promise<boolean> {
+  const authHeader = req.headers.get('authorization')
+  if (!authHeader?.startsWith('Bearer ')) return false
+  const token = authHeader.substring(7)
+  try {
+    const { adminDb } = await import('@/lib/firebase-admin')
+    const doc = await adminDb.collection('configs').doc('admin_auth').get()
+    if (!doc.exists) return false
+    const data = doc.data()!
+    return data.sessionToken === token && new Date(data.sessionExpires) > new Date()
+  } catch {
+    return false
+  }
+}
+
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url)
   const limit = parseInt(searchParams.get('limit') || '20')
-  
-  // Check if admin is requesting to view drafts too
-  const authHeader = req.headers.get('authorization')
-  const isAdmin = authHeader === `Bearer ${process.env.ADMIN_SECRET}`
-  
+  const adminAccess = await isAuthorized(req)
+
   try {
     const { adminDb } = await import('@/lib/firebase-admin')
     let query = adminDb.collection('posts').orderBy('createdAt', 'desc').limit(limit)
-    
-    if (!isAdmin) {
+    if (!adminAccess) {
       // @ts-ignore
       query = query.where('published', '==', true)
     }
-    
     const snap = await query.get()
     const posts = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }))
-    
-    const headers: Record<string, string> = {}
-    if (!isAdmin) {
-      headers['Cache-Control'] = 'public, s-maxage=300, stale-while-revalidate=600'
-    } else {
-      headers['Cache-Control'] = 'no-store, max-age=0'
-    }
-    
+    const headers: Record<string, string> = adminAccess
+      ? { 'Cache-Control': 'no-store, max-age=0' }
+      : { 'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600' }
     return NextResponse.json({ posts }, { headers })
   } catch (e) {
     return NextResponse.json({ posts: [], error: 'Could not load posts' }, { status: 500 })
   }
 }
 
-// Owner-only POST — requires Authorization: Bearer <ADMIN_SECRET>
 export async function POST(req: NextRequest) {
-  if (req.headers.get('authorization') !== `Bearer ${process.env.ADMIN_SECRET}`) {
+  if (!(await isAuthorized(req))) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
   const body   = await req.json()
@@ -64,17 +68,14 @@ export async function POST(req: NextRequest) {
   }
 }
 
-// Owner-only DELETE — requires Authorization: Bearer <ADMIN_SECRET>
 export async function DELETE(req: NextRequest) {
-  if (req.headers.get('authorization') !== `Bearer ${process.env.ADMIN_SECRET}`) {
+  if (!(await isAuthorized(req))) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
   try {
     const { searchParams } = new URL(req.url)
     const id = searchParams.get('id')
-    if (!id) {
-      return NextResponse.json({ error: 'Missing post ID' }, { status: 400 })
-    }
+    if (!id) return NextResponse.json({ error: 'Missing post ID' }, { status: 400 })
     const { adminDb } = await import('@/lib/firebase-admin')
     await adminDb.collection('posts').doc(id).delete()
     return NextResponse.json({ success: true })

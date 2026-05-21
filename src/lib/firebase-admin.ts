@@ -13,3 +13,25 @@ function getAdminApp() {
 }
 
 export const adminDb = getFirestore(getAdminApp())
+
+export async function verifyAdminToken(authHeader: string | null): Promise<boolean> {
+  if (!authHeader || !authHeader.startsWith('Bearer ')) return false
+  const token = authHeader.substring(7)
+  try {
+    const docRef = adminDb.collection('configs').doc('admin_auth')
+    const doc = await docRef.get()
+    if (!doc.exists) return false
+    const data = doc.data()
+    if (!data || !data.sessionToken || !data.sessionExpires) return false
+    
+    if (data.sessionToken === token) {
+      const expires = new Date(data.sessionExpires)
+      if (expires > new Date()) {
+        return true
+      }
+    }
+  } catch (e) {
+    console.error('Error verifying admin token', e)
+  }
+  return false
+}

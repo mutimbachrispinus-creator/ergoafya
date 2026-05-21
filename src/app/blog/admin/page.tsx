@@ -64,17 +64,34 @@ function parseMarkdown(md: string) {
 }
 
 export default function BlogAdminPage() {
-  const [authed, setAuthed] = useState(false)
-  const [secret, setSecret] = useState('')
+  // 'checking' | 'setup' | 'login' | 'authed'
+  const [authState, setAuthState] = useState<'checking' | 'setup' | 'login' | 'authed'>('checking')
+  const [sessionToken, setSessionToken] = useState('')
   const [authLoading, setAuthLoading] = useState(false)
   const [authError, setAuthError] = useState('')
-  
+
+  // Login form
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
+
+  // Setup form (first-time)
+  const [setupUsername, setSetupUsername] = useState('')
+  const [setupPassword, setSetupPassword] = useState('')
+  const [setupConfirm, setSetupConfirm] = useState('')
+  const [bootstrapSecret, setBootstrapSecret] = useState('')
+
+  // Change credentials modal
+  const [showChangeCreds, setShowChangeCreds] = useState(false)
+  const [newUsername, setNewUsername] = useState('')
+  const [newPassword, setNewPassword] = useState('')
+  const [changeCredsLoading, setChangeCredsLoading] = useState(false)
+  const [changeCredsMsg, setChangeCredsMsg] = useState('')
+
   const [posts, setPosts] = useState<any[]>([])
   const [postsLoading, setPostsLoading] = useState(false)
-  
   const [status, setStatus] = useState<'idle' | 'saving' | 'ok' | 'err'>('idle')
   const [saveError, setSaveError] = useState('')
-  
   const [form, setForm] = useState({
     title: '',
     category: 'Ergonomics Tips',
@@ -82,68 +99,141 @@ export default function BlogAdminPage() {
     content: '',
     published: false,
   })
-  
   const [activeTab, setActiveTab] = useState<'edit' | 'preview'>('edit')
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
-  // Try auto-login on mount
+  // On mount: check if admin account exists, then try stored token
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const savedSecret = localStorage.getItem('ergoafya_admin_secret')
-      if (savedSecret) {
-        verifySecret(savedSecret)
+    async function init() {
+      try {
+        const res = await fetch('/api/blog/auth')
+        const data = await res.json()
+        if (data.needsSetup) {
+          setAuthState('setup')
+          return
+        }
+      } catch {}
+      // Account exists — try stored token
+      const stored = localStorage.getItem('ergoafya_admin_token')
+      if (stored) {
+        await loginWithToken(stored)
+      } else {
+        setAuthState('login')
       }
     }
+    init()
   }, [])
 
-  async function verifySecret(keyToVerify: string) {
+  async function loginWithToken(token: string) {
+    try {
+      const res = await fetch('/api/blog', { headers: { 'Authorization': `Bearer ${token}` } })
+      if (res.ok) {
+        const data = await res.json()
+        setSessionToken(token)
+        setAuthState('authed')
+        setPosts(data.posts || [])
+        return
+      }
+    } catch {}
+    localStorage.removeItem('ergoafya_admin_token')
+    setAuthState('login')
+  }
+
+  async function handleLogin(e: React.FormEvent) {
+    e.preventDefault()
     setAuthLoading(true)
     setAuthError('')
     try {
       const res = await fetch('/api/blog/auth', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ secret: keyToVerify }),
+        body: JSON.stringify({ username, password }),
       })
       const data = await res.json()
       if (res.ok && data.success) {
-        setSecret(keyToVerify)
-        localStorage.setItem('ergoafya_admin_secret', keyToVerify)
-        setAuthed(true)
-        fetchPosts(keyToVerify)
+        localStorage.setItem('ergoafya_admin_token', data.sessionToken)
+        setSessionToken(data.sessionToken)
+        setAuthState('authed')
+        fetchPosts(data.sessionToken)
       } else {
-        setAuthError(data.error || 'Invalid secret key')
-        localStorage.removeItem('ergoafya_admin_secret')
+        setAuthError(data.error || 'Invalid credentials.')
       }
-    } catch (e) {
-      setAuthError('Connection failed. Please check if server is running.')
+    } catch {
+      setAuthError('Connection failed. Is the server running?')
     } finally {
       setAuthLoading(false)
     }
   }
 
-  async function fetchPosts(key: string) {
-    setPostsLoading(true)
+  async function handleSetup(e: React.FormEvent) {
+    e.preventDefault()
+    if (setupPassword !== setupConfirm) { setAuthError('Passwords do not match.'); return }
+    if (setupPassword.length < 8) { setAuthError('Password must be at least 8 characters.'); return }
+    setAuthLoading(true)
+    setAuthError('')
     try {
-      const res = await fetch('/api/blog', {
-        headers: { 'Authorization': `Bearer ${key}` }
+      const res = await fetch('/api/blog/auth', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ bootstrapSecret, username: setupUsername, password: setupPassword }),
       })
       const data = await res.json()
-      if (res.ok) {
-        setPosts(data.posts || [])
+      if (res.ok && data.success) {
+        localStorage.setItem('ergoafya_admin_token', data.sessionToken)
+        setSessionToken(data.sessionToken)
+        setAuthState('authed')
+        fetchPosts(data.sessionToken)
+      } else {
+        setAuthError(data.error || 'Setup failed.')
       }
-    } catch (e) {
-      console.error('Failed to load posts', e)
+    } catch {
+      setAuthError('Connection failed.')
     } finally {
-      setPostsLoading(false)
+      setAuthLoading(false)
     }
   }
 
+  async function handleChangeCreds(e: React.FormEvent) {
+    e.preventDefault()
+    setChangeCredsLoading(true)
+    setChangeCredsMsg('')
+    try {
+      const res = await fetch('/api/blog/auth', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${sessionToken}` },
+        body: JSON.stringify({ newUsername: newUsername || undefined, newPassword: newPassword || undefined }),
+      })
+      const data = await res.json()
+      if (res.ok && data.success) {
+        setChangeCredsMsg('✅ Credentials updated successfully!')
+        setNewUsername('')
+        setNewPassword('')
+        setTimeout(() => { setShowChangeCreds(false); setChangeCredsMsg('') }, 2000)
+      } else {
+        setChangeCredsMsg(`⚠️ ${data.error || 'Update failed.'}`)
+      }
+    } catch {
+      setChangeCredsMsg('⚠️ Connection failed.')
+    } finally {
+      setChangeCredsLoading(false)
+    }
+  }
+
+  async function fetchPosts(token: string) {
+    setPostsLoading(true)
+    try {
+      const res = await fetch('/api/blog', { headers: { 'Authorization': `Bearer ${token}` } })
+      const data = await res.json()
+      if (res.ok) setPosts(data.posts || [])
+    } catch (e) { console.error('Failed to load posts', e) }
+    finally { setPostsLoading(false) }
+  }
+
   function handleLogout() {
-    localStorage.removeItem('ergoafya_admin_secret')
-    setAuthed(false)
-    setSecret('')
+    localStorage.removeItem('ergoafya_admin_token')
+    setAuthState('login')
+    setSessionToken('')
     setPosts([])
   }
 
@@ -151,179 +241,132 @@ export default function BlogAdminPage() {
     e.preventDefault()
     if (form.title.length < 5) return alert('Title must be at least 5 characters')
     if (form.content.length < 50) return alert('Content must be at least 50 characters')
-    
-    setStatus('saving')
-    setSaveError('')
+    setStatus('saving'); setSaveError('')
     try {
       const res = await fetch('/api/blog', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${secret}`
-        },
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${sessionToken}` },
         body: JSON.stringify(form),
       })
       const json = await res.json()
       if (!res.ok) throw new Error(json.error || 'Save failed')
-      
       setStatus('ok')
-      // Refresh list
-      fetchPosts(secret)
-      // Reset form
-      setForm({
-        title: '',
-        category: 'Ergonomics Tips',
-        excerpt: '',
-        content: '',
-        published: false
-      })
+      fetchPosts(sessionToken)
+      setForm({ title: '', category: 'Ergonomics Tips', excerpt: '', content: '', published: false })
       setActiveTab('edit')
       setTimeout(() => setStatus('idle'), 3000)
-    } catch (err: any) {
-      setStatus('err')
-      setSaveError(err.message || 'Failed to publish post.')
-    }
+    } catch (err: any) { setStatus('err'); setSaveError(err.message || 'Failed to publish post.') }
   }
 
   async function handleDelete(id: string) {
     try {
       const res = await fetch(`/api/blog?id=${id}`, {
-        method: 'DELETE',
-        headers: { 'Authorization': `Bearer ${secret}` }
+        method: 'DELETE', headers: { 'Authorization': `Bearer ${sessionToken}` }
       })
-      if (res.ok) {
-        setPosts(prev => prev.filter(p => p.id !== id))
-        setDeleteConfirmId(null)
-      } else {
-        alert('Failed to delete post.')
-      }
-    } catch (e) {
-      alert('Error connecting to API.')
-    }
+      if (res.ok) { setPosts(prev => prev.filter(p => p.id !== id)); setDeleteConfirmId(null) }
+      else alert('Failed to delete post.')
+    } catch { alert('Error connecting to API.') }
   }
 
   function insertFormatting(type: string) {
-    const textarea = textareaRef.current
-    if (!textarea) return
-
-    const start = textarea.selectionStart
-    const end = textarea.selectionEnd
-    const text = textarea.value
-    const selected = text.substring(start, end)
-    
-    let replacement = ''
-    switch (type) {
-      case 'bold':
-        replacement = `**${selected || 'bold text'}**`
-        break
-      case 'italic':
-        replacement = `*${selected || 'italic text'}*`
-        break
-      case 'h2':
-        replacement = `\n## ${selected || 'Heading 2'}\n`
-        break
-      case 'h3':
-        replacement = `\n### ${selected || 'Heading 3'}\n`
-        break
-      case 'quote':
-        replacement = `\n> ${selected || 'Blockquote text'}\n`
-        break
-      case 'list':
-        replacement = `\n- ${selected || 'List item'}\n`
-        break
-      case 'link':
-        replacement = `[${selected || 'Link Title'}](https://example.com)`
-        break
-      default:
-        return
+    const textarea = textareaRef.current; if (!textarea) return
+    const start = textarea.selectionStart, end = textarea.selectionEnd
+    const selected = textarea.value.substring(start, end)
+    const map: Record<string, string> = {
+      bold: `**${selected || 'bold text'}**`, italic: `*${selected || 'italic text'}*`,
+      h2: `\n## ${selected || 'Heading 2'}\n`, h3: `\n### ${selected || 'Heading 3'}\n`,
+      quote: `\n> ${selected || 'Blockquote'}\n`, list: `\n- ${selected || 'List item'}\n`,
+      link: `[${selected || 'Link Title'}](https://example.com)`,
     }
-
-    const newContent = text.substring(0, start) + replacement + text.substring(end)
+    const replacement = map[type]; if (!replacement) return
+    const newContent = textarea.value.substring(0, start) + replacement + textarea.value.substring(end)
     setForm(f => ({ ...f, content: newContent }))
-    
-    // Focus back and select inserted text
-    setTimeout(() => {
-      textarea.focus()
-      const offset = replacement.length
-      textarea.setSelectionRange(start + offset, start + offset)
-    }, 50)
+    setTimeout(() => { textarea.focus(); textarea.setSelectionRange(start + replacement.length, start + replacement.length) }, 50)
   }
 
   const wordCount = form.content.trim() ? form.content.trim().split(/\s+/).length : 0
   const charCount = form.content.length
 
-  if (!authed) {
+  // ── Checking state ──────────────────────────────────────────────────────────
+  if (authState === 'checking') {
     return (
-      <main style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: 'var(--cream)', padding: '100px 1.5rem 2rem' }}>
-        <div style={{ background: 'var(--white)', border: '1px solid var(--border)', borderRadius: 24, padding: '3.5rem 2.5rem', width: '100%', maxWidth: 460, boxShadow: 'var(--shadow)', textAlign: 'center' }}>
-          <div style={{ marginBottom: '2rem' }}>
-            <span style={{ fontSize: '3rem', display: 'inline-block', marginBottom: '1rem', filter: 'drop-shadow(0 4px 6px rgba(15,35,24,0.1))' }}>🛡️</span>
-            <h1 className="serif" style={{ fontSize: '2rem', fontWeight: 700, color: 'var(--forest)' }}>Administrator Portal</h1>
-            <p style={{ fontSize: '0.88rem', color: 'var(--muted)', marginTop: '0.4rem' }}>Enter access key to manage ErgoAfya blog &amp; news posts</p>
-          </div>
-          
-          <div style={{ textAlign: 'left', marginBottom: '1.5rem' }}>
-            <label style={lStyle}>Security Access Key</label>
-            <div style={{ position: 'relative' }}>
-              <input
-                type="password"
-                value={secret}
-                onChange={e => setSecret(e.target.value)}
-                style={{ ...iStyle, paddingLeft: '2.5rem' }}
-                placeholder="••••••••••••••••••••"
-                onKeyDown={e => e.key === 'Enter' && secret && verifySecret(secret)}
-                disabled={authLoading}
-              />
-              <span style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', color: 'var(--light)', fontSize: '1rem' }}>🔑</span>
-            </div>
-            {authError && (
-              <p style={{ color: '#d94624', fontSize: '0.78rem', marginTop: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
-                ⚠️ {authError}
-              </p>
-            )}
-          </div>
-
-          <button
-            onClick={() => verifySecret(secret)}
-            disabled={authLoading || !secret}
-            style={{
-              width: '100%',
-              background: 'linear-gradient(135deg, var(--leaf), var(--forest))',
-              color: 'var(--cream)',
-              border: 'none',
-              borderRadius: 100,
-              padding: '1rem',
-              fontFamily: "'Outfit', sans-serif",
-              fontSize: '0.95rem',
-              fontWeight: 700,
-              cursor: 'pointer',
-              boxShadow: '0 4px 15px rgba(15,35,24,0.15)',
-              transition: 'all 0.25s',
-              opacity: authLoading || !secret ? 0.6 : 1,
-            }}
-          >
-            {authLoading ? 'Verifying Credentials...' : 'Authenticate Access →'}
-          </button>
-        </div>
-
-        {/* Access key instructions card */}
-        <div style={{ marginTop: '2rem', background: '#fff', border: '1px dashed var(--border)', borderRadius: 16, padding: '1.5rem', maxWidth: 460, fontSize: '0.8rem', color: 'var(--muted)', lineHeight: 1.5 }}>
-          <h4 style={{ color: 'var(--forest)', fontWeight: 700, marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-            💡 Where is the admin key configured?
-          </h4>
-          <p style={{ marginBottom: '0.6rem' }}>
-            The access secret is managed via the environment variable <strong><code>ADMIN_SECRET</code></strong>:
-          </p>
-          <ul style={{ paddingLeft: '1.2rem', display: 'grid', gap: '0.4rem' }}>
-            <li><strong>Local Development:</strong> Stored in <code>.env.local</code> as <code>ADMIN_SECRET=...</code></li>
-            <li><strong>Production:</strong> Configure it as an encrypted Environment Variable in Cloudflare Workers settings.</li>
-          </ul>
+      <main style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--cream)' }}>
+        <div style={{ textAlign: 'center', color: 'var(--muted)' }}>
+          <div style={{ fontSize: '2rem', marginBottom: '1rem' }}>🔐</div>
+          <p style={{ fontFamily: "'Outfit', sans-serif" }}>Checking authentication…</p>
         </div>
       </main>
     )
   }
 
-  // Calculate dynamic dashboard stats
+  // ── First-time setup state ──────────────────────────────────────────────────
+  if (authState === 'setup') {
+    return (
+      <main style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: 'var(--cream)', padding: '100px 1.5rem 2rem' }}>
+        <div style={{ background: 'var(--white)', border: '1px solid var(--border)', borderRadius: 24, padding: '3rem 2.5rem', width: '100%', maxWidth: 480, boxShadow: 'var(--shadow)' }}>
+          <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
+            <span style={{ fontSize: '3rem' }}>🔧</span>
+            <h1 className="serif" style={{ fontSize: '1.8rem', fontWeight: 700, color: 'var(--forest)', marginTop: '0.5rem' }}>Create Admin Account</h1>
+            <p style={{ fontSize: '0.84rem', color: 'var(--muted)', marginTop: '0.4rem' }}>One-time setup. Only one admin account is allowed.</p>
+          </div>
+          <form onSubmit={handleSetup} style={{ display: 'grid', gap: '1.1rem' }}>
+            <div>
+              <label style={lStyle}>Bootstrap Secret (from ADMIN_SECRET env var)</label>
+              <input type="password" value={bootstrapSecret} onChange={e => setBootstrapSecret(e.target.value)} style={iStyle} placeholder="Paste the ADMIN_SECRET value" required />
+            </div>
+            <div>
+              <label style={lStyle}>Choose Username</label>
+              <input type="text" value={setupUsername} onChange={e => setSetupUsername(e.target.value)} style={iStyle} placeholder="e.g. ergoafya_admin" minLength={4} required />
+            </div>
+            <div>
+              <label style={lStyle}>Choose Password</label>
+              <input type="password" value={setupPassword} onChange={e => setSetupPassword(e.target.value)} style={iStyle} placeholder="Min 8 characters" minLength={8} required />
+            </div>
+            <div>
+              <label style={lStyle}>Confirm Password</label>
+              <input type="password" value={setupConfirm} onChange={e => setSetupConfirm(e.target.value)} style={iStyle} placeholder="Re-enter password" required />
+            </div>
+            {authError && <p style={{ color: '#d94624', fontSize: '0.8rem' }}>⚠️ {authError}</p>}
+            <button type="submit" disabled={authLoading} style={{ background: 'linear-gradient(135deg, var(--leaf), var(--forest))', color: 'white', border: 'none', borderRadius: 100, padding: '1rem', fontFamily: "'Outfit', sans-serif", fontSize: '0.95rem', fontWeight: 700, cursor: 'pointer', opacity: authLoading ? 0.7 : 1 }}>
+              {authLoading ? 'Creating Account…' : 'Create Admin Account →'}
+            </button>
+          </form>
+        </div>
+      </main>
+    )
+  }
+
+  // ── Login state ─────────────────────────────────────────────────────────────
+  if (authState === 'login') {
+    return (
+      <main style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: 'var(--cream)', padding: '100px 1.5rem 2rem' }}>
+        <div style={{ background: 'var(--white)', border: '1px solid var(--border)', borderRadius: 24, padding: '3.5rem 2.5rem', width: '100%', maxWidth: 440, boxShadow: 'var(--shadow)', textAlign: 'center' }}>
+          <span style={{ fontSize: '3rem', display: 'inline-block', marginBottom: '1rem' }}>🛡️</span>
+          <h1 className="serif" style={{ fontSize: '2rem', fontWeight: 700, color: 'var(--forest)' }}>Administrator Portal</h1>
+          <p style={{ fontSize: '0.88rem', color: 'var(--muted)', marginTop: '0.4rem', marginBottom: '2rem' }}>Sign in to manage ErgoAfya blog &amp; news posts</p>
+          <form onSubmit={handleLogin} style={{ display: 'grid', gap: '1rem', textAlign: 'left' }}>
+            <div>
+              <label style={lStyle}>Username</label>
+              <input type="text" value={username} onChange={e => setUsername(e.target.value)} style={iStyle} placeholder="Your admin username" autoComplete="username" required />
+            </div>
+            <div>
+              <label style={lStyle}>Password</label>
+              <div style={{ position: 'relative' }}>
+                <input type={showPassword ? 'text' : 'password'} value={password} onChange={e => setPassword(e.target.value)} style={{ ...iStyle, paddingRight: '3rem' }} placeholder="••••••••" autoComplete="current-password" required />
+                <button type="button" onClick={() => setShowPassword(v => !v)} style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', fontSize: '1rem', color: 'var(--muted)' }}>{showPassword ? '🙈' : '👁️'}</button>
+              </div>
+            </div>
+            {authError && <p style={{ color: '#d94624', fontSize: '0.8rem' }}>⚠️ {authError}</p>}
+            <button type="submit" disabled={authLoading} style={{ background: 'linear-gradient(135deg, var(--leaf), var(--forest))', color: 'white', border: 'none', borderRadius: 100, padding: '1rem', fontFamily: "'Outfit', sans-serif", fontSize: '0.95rem', fontWeight: 700, cursor: 'pointer', marginTop: '0.4rem', opacity: authLoading ? 0.7 : 1 }}>
+              {authLoading ? 'Signing In…' : 'Sign In →'}
+            </button>
+          </form>
+        </div>
+      </main>
+    )
+  }
+
+  // ── Dashboard ───────────────────────────────────────────────────────────────
   const totalPostsCount = posts.length
   const publishedCount = posts.filter(p => p.published).length
   const draftsCount = posts.filter(p => !p.published).length
@@ -331,66 +374,47 @@ export default function BlogAdminPage() {
 
   return (
     <main style={{ paddingTop: 72, background: 'var(--cream)', minHeight: '100vh' }}>
-      {/* Header section with rich gradient */}
-      <div className="admin-gradient-header" style={{ padding: '3.5rem 5vw 3rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1.5rem' }}>
-        <div>
-          <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', background: 'rgba(255,255,255,0.15)', color: 'var(--mint)', fontSize: '0.68rem', fontWeight: 700, padding: '0.3rem 0.7rem', borderRadius: 100, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.6rem' }}>
-            ● Live Publishing Connection
-          </span>
-          <h1 className="serif" style={{ color: 'var(--cream)', fontSize: '2.5rem', fontWeight: 700, lineHeight: 1.1 }}>
-            ErgoAfya Publishing Hub
-          </h1>
-          <p style={{ color: 'rgba(246,242,235,0.75)', fontSize: '0.9rem', marginTop: '0.4rem' }}>
-            Create and publish articles to educate and grow Kenyan businesses.
-          </p>
+      {/* Change credentials modal */}
+      {showChangeCreds && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}>
+          <div style={{ background: 'var(--white)', borderRadius: 20, padding: '2.5rem', width: '100%', maxWidth: 420, boxShadow: '0 25px 60px rgba(0,0,0,0.2)' }}>
+            <h2 className="serif" style={{ fontWeight: 700, color: 'var(--forest)', marginBottom: '1.5rem' }}>🔐 Change Credentials</h2>
+            <form onSubmit={handleChangeCreds} style={{ display: 'grid', gap: '1rem' }}>
+              <div><label style={lStyle}>New Username (leave blank to keep)</label><input type="text" value={newUsername} onChange={e => setNewUsername(e.target.value)} style={iStyle} placeholder="New username" /></div>
+              <div><label style={lStyle}>New Password (leave blank to keep)</label><input type="password" value={newPassword} onChange={e => setNewPassword(e.target.value)} style={iStyle} placeholder="New password (min 8 chars)" /></div>
+              {changeCredsMsg && <p style={{ fontSize: '0.82rem', color: changeCredsMsg.startsWith('✅') ? 'var(--sage)' : '#d94624' }}>{changeCredsMsg}</p>}
+              <div style={{ display: 'flex', gap: '0.8rem' }}>
+                <button type="submit" disabled={changeCredsLoading} style={{ flex: 1, background: 'var(--forest)', color: 'white', border: 'none', borderRadius: 100, padding: '0.8rem', fontFamily: "'Outfit',sans-serif", fontWeight: 700, cursor: 'pointer' }}>{changeCredsLoading ? 'Saving…' : 'Save Changes'}</button>
+                <button type="button" onClick={() => setShowChangeCreds(false)} style={{ flex: 1, background: 'var(--cream)', color: 'var(--forest)', border: '1px solid var(--border)', borderRadius: 100, padding: '0.8rem', fontFamily: "'Outfit',sans-serif", fontWeight: 600, cursor: 'pointer' }}>Cancel</button>
+              </div>
+            </form>
+          </div>
         </div>
-        
-        <button
-          onClick={handleLogout}
-          style={{
-            background: 'rgba(255,255,255,0.08)',
-            color: 'var(--cream)',
-            border: '1px solid rgba(255,255,255,0.2)',
-            borderRadius: 100,
-            padding: '0.6rem 1.3rem',
-            fontFamily: "'Outfit', sans-serif",
-            fontSize: '0.85rem',
-            fontWeight: 600,
-            cursor: 'pointer',
-            transition: 'all 0.25s',
-          }}
-          onMouseEnter={e => {
-            e.currentTarget.style.background = '#e06c5c'
-            e.currentTarget.style.borderColor = '#e06c5c'
-          }}
-          onMouseLeave={e => {
-            e.currentTarget.style.background = 'rgba(255,255,255,0.08)'
-            e.currentTarget.style.borderColor = 'rgba(255,255,255,0.2)'
-          }}
-        >
-          🔒 Lock Dashboard
-        </button>
+      )}
+
+      {/* Header */}
+      <div className="admin-gradient-header" style={{ padding: '3rem 5vw 2.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1.5rem' }}>
+        <div>
+          <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', background: 'rgba(255,255,255,0.15)', color: 'var(--mint)', fontSize: '0.68rem', fontWeight: 700, padding: '0.3rem 0.7rem', borderRadius: 100, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.6rem' }}>● Live</span>
+          <h1 className="serif" style={{ color: 'var(--cream)', fontSize: '2.2rem', fontWeight: 700, lineHeight: 1.1 }}>ErgoAfya Publishing Hub</h1>
+          <p style={{ color: 'rgba(246,242,235,0.75)', fontSize: '0.88rem', marginTop: '0.4rem' }}>Create and publish articles to educate and grow Kenyan businesses.</p>
+        </div>
+        <div style={{ display: 'flex', gap: '0.7rem', flexWrap: 'wrap' }}>
+          <button onClick={() => setShowChangeCreds(true)} style={{ background: 'rgba(255,255,255,0.1)', color: 'var(--cream)', border: '1px solid rgba(255,255,255,0.2)', borderRadius: 100, padding: '0.6rem 1.2rem', fontFamily: "'Outfit',sans-serif", fontSize: '0.82rem', fontWeight: 600, cursor: 'pointer' }}>⚙️ Settings</button>
+          <button onClick={handleLogout} style={{ background: 'rgba(217,70,36,0.2)', color: '#ffb3a0', border: '1px solid rgba(217,70,36,0.3)', borderRadius: 100, padding: '0.6rem 1.2rem', fontFamily: "'Outfit',sans-serif", fontSize: '0.82rem', fontWeight: 600, cursor: 'pointer' }}>🔒 Lock</button>
+        </div>
       </div>
 
-      {/* Colorful dashboard statistics row */}
-      <div style={{ padding: '2rem 5vw 0', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.2rem' }}>
-        <div className="admin-stat-card" style={{ background: 'var(--white)', borderLeft: '4px solid var(--sage)' }}>
-          <div style={{ fontSize: '0.75rem', color: 'var(--muted)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Total Articles</div>
-          <div style={{ fontSize: '2rem', fontWeight: 700, color: 'var(--forest)', marginTop: '0.2rem' }}>{totalPostsCount}</div>
-        </div>
-        <div className="admin-stat-card" style={{ background: 'var(--white)', borderLeft: '4px solid var(--mint)' }}>
-          <div style={{ fontSize: '0.75rem', color: 'var(--muted)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Published</div>
-          <div style={{ fontSize: '2rem', fontWeight: 700, color: 'var(--leaf)', marginTop: '0.2rem' }}>{publishedCount}</div>
-        </div>
-        <div className="admin-stat-card" style={{ background: 'var(--white)', borderLeft: '4px solid var(--warm)' }}>
-          <div style={{ fontSize: '0.75rem', color: 'var(--muted)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Drafts</div>
-          <div style={{ fontSize: '2rem', fontWeight: 700, color: 'var(--earth)', marginTop: '0.2rem' }}>{draftsCount}</div>
-        </div>
-        <div className="admin-stat-card" style={{ background: 'var(--white)', borderLeft: '4px solid var(--purple)' }}>
-          <div style={{ fontSize: '0.75rem', color: 'var(--muted)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Categories</div>
-          <div style={{ fontSize: '2rem', fontWeight: 700, color: 'var(--forest)', marginTop: '0.2rem' }}>{uniqueCategories}</div>
-        </div>
+      {/* Stats row */}
+      <div style={{ padding: '2rem 5vw 0', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: '1.2rem' }}>
+        {[['Total Articles', totalPostsCount, 'var(--sage)'],['Published', publishedCount,'var(--mint)'],['Drafts', draftsCount,'var(--warm)'],['Categories', uniqueCategories,'var(--purple)']].map(([label, val, color]) => (
+          <div key={label as string} className="admin-stat-card" style={{ background: 'var(--white)', borderLeft: `4px solid ${color}` }}>
+            <div style={{ fontSize: '0.72rem', color: 'var(--muted)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>{label}</div>
+            <div style={{ fontSize: '2rem', fontWeight: 700, color: 'var(--forest)', marginTop: '0.2rem' }}>{val}</div>
+          </div>
+        ))}
       </div>
+
 
       <div className="section" style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr', gap: '3rem', alignItems: 'start', paddingBottom: '6rem', paddingTop: '2rem' }}>
         
