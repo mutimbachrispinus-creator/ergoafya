@@ -1,0 +1,10 @@
+node_modules/
+.next/
+.open-next/
+out/
+.env.local
+.env.*.local
+*.pem
+firebase-debug.log
+.firebase/
+functions/node_modules/
