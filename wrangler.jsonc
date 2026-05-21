@@ -1,6 +1,6 @@
 {
   // Cloudflare Workers config (used by @opennextjs/cloudflare)
-  "name": "ergoafya-solutions",
+  "name": "ergoafya",
   "main": ".open-next/worker.js",
   "compatibility_date": "2025-04-01",       // IMPORTANT: must be 2025-04-01+ for process.env to work
   "compatibility_flags": ["nodejs_compat"],  // Enables Node.js APIs in Workers
