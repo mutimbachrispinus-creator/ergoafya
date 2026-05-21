@@ -64,8 +64,8 @@ function parseMarkdown(md: string) {
 }
 
 export default function BlogAdminPage() {
-  // 'checking' | 'setup' | 'login' | 'authed'
-  const [authState, setAuthState] = useState<'checking' | 'setup' | 'login' | 'authed'>('checking')
+  // 'checking' | 'login' | 'authed'
+  const [authState, setAuthState] = useState<'checking' | 'login' | 'authed'>('checking')
   const [sessionToken, setSessionToken] = useState('')
   const [authLoading, setAuthLoading] = useState(false)
   const [authError, setAuthError] = useState('')
@@ -74,19 +74,6 @@ export default function BlogAdminPage() {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
-
-  // Setup form (first-time)
-  const [setupUsername, setSetupUsername] = useState('')
-  const [setupPassword, setSetupPassword] = useState('')
-  const [setupConfirm, setSetupConfirm] = useState('')
-  const [bootstrapSecret, setBootstrapSecret] = useState('')
-
-  // Change credentials modal
-  const [showChangeCreds, setShowChangeCreds] = useState(false)
-  const [newUsername, setNewUsername] = useState('')
-  const [newPassword, setNewPassword] = useState('')
-  const [changeCredsLoading, setChangeCredsLoading] = useState(false)
-  const [changeCredsMsg, setChangeCredsMsg] = useState('')
 
   const [posts, setPosts] = useState<any[]>([])
   const [postsLoading, setPostsLoading] = useState(false)
@@ -103,26 +90,14 @@ export default function BlogAdminPage() {
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
-  // On mount: check if admin account exists, then try stored token
+  // On mount: try stored token, otherwise show login
   useEffect(() => {
-    async function init() {
-      try {
-        const res = await fetch('/api/blog/auth')
-        const data = await res.json()
-        if (data.needsSetup) {
-          setAuthState('setup')
-          return
-        }
-      } catch {}
-      // Account exists — try stored token
-      const stored = localStorage.getItem('ergoafya_admin_token')
-      if (stored) {
-        await loginWithToken(stored)
-      } else {
-        setAuthState('login')
-      }
+    const stored = localStorage.getItem('ergoafya_admin_token')
+    if (stored) {
+      loginWithToken(stored)
+    } else {
+      setAuthState('login')
     }
-    init()
   }, [])
 
   async function loginWithToken(token: string) {

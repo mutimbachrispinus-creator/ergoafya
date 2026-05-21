@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
+import { verifySessionToken } from '@/app/api/blog/auth/route'
 
 const PostSchema = z.object({
   title:     z.string().min(5),
@@ -10,25 +11,16 @@ const PostSchema = z.object({
   published: z.boolean().default(false),
 })
 
-async function isAuthorized(req: NextRequest): Promise<boolean> {
+function isAuthorized(req: NextRequest): boolean {
   const authHeader = req.headers.get('authorization')
   if (!authHeader?.startsWith('Bearer ')) return false
-  const token = authHeader.substring(7)
-  try {
-    const { adminDb } = await import('@/lib/firebase-admin')
-    const doc = await adminDb.collection('configs').doc('admin_auth').get()
-    if (!doc.exists) return false
-    const data = doc.data()!
-    return data.sessionToken === token && new Date(data.sessionExpires) > new Date()
-  } catch {
-    return false
-  }
+  return verifySessionToken(authHeader.substring(7))
 }
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url)
   const limit = parseInt(searchParams.get('limit') || '20')
-  const adminAccess = await isAuthorized(req)
+  const adminAccess = isAuthorized(req)
 
   try {
     const { adminDb } = await import('@/lib/firebase-admin')
@@ -49,7 +41,7 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
-  if (!(await isAuthorized(req))) {
+  if (!isAuthorized(req)) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
   const body   = await req.json()
@@ -69,7 +61,7 @@ export async function POST(req: NextRequest) {
 }
 
 export async function DELETE(req: NextRequest) {
-  if (!(await isAuthorized(req))) {
+  if (!isAuthorized(req)) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
   try {
