@@ -28,6 +28,11 @@ const nextConfig = {
       },
     ]
   },
+  experimental: {
+    outputFileTracingIncludes: {
+      '/api/**/*': ['./node_modules/uuid/**/*'],
+    },
+  },
 }
 
 module.exports = nextConfig
