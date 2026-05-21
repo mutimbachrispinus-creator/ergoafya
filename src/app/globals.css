@@ -16,6 +16,10 @@
   --light:  #8aaa98;
   --shadow: 0 16px 48px rgba(15,35,24,0.12);
   --r:      20px;
+  --coral:  #e06c5c;
+  --purple: #7c5cbf;
+  --sky:    #4a9fd6;
+  --gold:   #d4a843;
 }
 
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
@@ -127,21 +131,213 @@ body {
 .ribbon-item::before { content: ''; width: 4px; height: 4px; border-radius: 50%; background: var(--sage); }
 @keyframes ticker { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 
-/* responsive */
-@media (max-width: 768px) {
-  .section { padding: 4rem 5vw; }
-  .hide-mobile { display: none; }
-}
-
-/* responsive nav helpers */
-@media (min-width: 769px) { .hide-desktop { display: none !important; } }
-@media (max-width: 768px)  { .hide-mobile  { display: none !important; } }
-
 /* shared link hover states */
 .nav-link:hover { color: var(--leaf) !important; }
 .footer-link:hover,
 .footer-contact-link:hover { color: var(--sage) !important; }
 
+/* ═══════════════════════════════════════════
+   MOBILE NAV DOTS  —  page-style navigation
+   ═══════════════════════════════════════════ */
+.mobile-page-nav {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 250;
+  background: rgba(15,35,24,.95);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  padding: 0.5rem 1rem;
+  padding-bottom: calc(0.5rem + env(safe-area-inset-bottom, 0px));
+  border-top: 1px solid rgba(74,172,120,.2);
+}
+.mobile-page-nav-inner {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  gap: 0.25rem;
+}
+.mobile-page-nav a {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  text-decoration: none;
+  color: rgba(246,242,235,.45);
+  font-size: 0.58rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  padding: 0.35rem 0.3rem;
+  border-radius: 8px;
+  transition: all 0.25s;
+  min-width: 48px;
+}
+.mobile-page-nav a .nav-icon {
+  font-size: 1.15rem;
+  line-height: 1;
+}
+.mobile-page-nav a.active {
+  color: var(--mint);
+  background: rgba(74,172,120,.12);
+}
+
+/* ═══════════════════════════════════════════
+   ENHANCED MOBILE STYLES
+   ═══════════════════════════════════════════ */
+
+/* Desktop: hide mobile nav, show desktop elements */
+@media (min-width: 769px) {
+  .hide-desktop { display: none !important; }
+  .mobile-page-nav { display: none !important; }
+}
+
+/* Tablet */
+@media (max-width: 1024px) {
+  .section { padding: 4.5rem 5vw; }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .section { padding: 3.5rem 4vw; }
+  .hide-mobile { display: none !important; }
+  
+  /* Show mobile page nav */
+  .mobile-page-nav { display: block; }
+  
+  /* Add bottom padding for nav */
+  body { padding-bottom: 72px; }
+  
+  /* Adjust WA float for mobile nav */
+  .wa-float { bottom: 80px !important; right: 16px !important; }
+  .wa-btn { width: 48px; height: 48px; }
+  .wa-btn svg { width: 24px; height: 24px; }
+
+  /* Hero mobile */
+  .hero-section {
+    min-height: auto !important;
+    padding: 88px 4vw 2.5rem !important;
+  }
+
+  /* Better card sizing */
+  .card { padding: 1.4rem; border-radius: 16px; }
+
+  /* Blog grid on mobile */
+  .blog-grid { grid-template-columns: 1fr !important; gap: 1rem !important; }
+
+  /* Button sizing */
+  .btn { padding: .75rem 1.4rem; font-size: .85rem; }
+  
+  /* About section inner card */
+  .about-inner {
+    padding: 2rem 1.2rem !important;
+    border-radius: 20px !important;
+  }
+  .about-inner > div:first-child {
+    grid-template-columns: 1fr !important;
+    gap: 2rem !important;
+  }
+
+  /* Heading sizes */
+  .sec-h2 { font-size: clamp(1.6rem, 5vw, 2.2rem); }
+}
+
+/* Small phones */
+@media (max-width: 480px) {
+  .section { padding: 2.5rem 4vw; }
+
+  .hero-section {
+    padding: 84px 4vw 2rem !important;
+  }
+
+  .mobile-page-nav a {
+    font-size: 0.52rem;
+    min-width: 40px;
+  }
+  .mobile-page-nav a .nav-icon { font-size: 1rem; }
+
+  /* Stats compact */
+  .stats-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 1rem !important; }
+
+  /* Steps */
+  .steps-grid { grid-template-columns: 1fr 1fr !important; gap: 1rem !important; }
+
+  /* Services */
+  .services-grid { grid-template-columns: 1fr !important; }
+  
+  /* Form rows */
+  .form-row { grid-template-columns: 1fr !important; }
+  
+  /* Blog admin */
+  .composer-row-1 { grid-template-columns: 1fr !important; }
+  
+  /* Booking */
+  .booking-grid { grid-template-columns: 1fr !important; gap: 2rem !important; }
+}
+
 /* footer responsive */
-@media (max-width: 900px)  { .footer-grid { grid-template-columns: 1fr 1fr !important; gap: 2rem !important; } }
-@media (max-width: 480px)  { .footer-grid { grid-template-columns: 1fr !important; } }
+@media (max-width: 900px) { .footer-grid { grid-template-columns: 1fr 1fr !important; gap: 2rem !important; } }
+@media (max-width: 480px) { .footer-grid { grid-template-columns: 1fr !important; } }
+
+/* ═══════════════════════════════════════════
+   COLORFUL ADMIN DASHBOARD ENHANCEMENTS
+   ═══════════════════════════════════════════ */
+.admin-gradient-header {
+  background: linear-gradient(135deg, #0f2318 0%, #1d5c38 40%, #2d7a4f 70%, #4aac78 100%) !important;
+}
+.admin-stat-card {
+  border-radius: 16px;
+  padding: 1.2rem;
+  border: 1px solid rgba(255,255,255,0.08);
+  backdrop-filter: blur(10px);
+  transition: all 0.3s;
+}
+.admin-stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+}
+
+/* Shimmer loading animation */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+.skeleton-shimmer {
+  background: linear-gradient(90deg, rgba(74,172,120,0.04) 25%, rgba(74,172,120,0.1) 50%, rgba(74,172,120,0.04) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+/* Smooth section transitions */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.fade-in { animation: fadeInUp 0.6s ease forwards; }
+
+/* Gradient text utility */
+.gradient-text {
+  background: linear-gradient(135deg, var(--sage), var(--mint));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ═══════════════════════════════════════════
+   HOME PAGE PAGINATION FOR MOBILE VIEW
+   ═══════════════════════════════════════════ */
+@media (max-width: 768px) {
+  .home-main .section-wrapper {
+    display: none !important;
+  }
+  
+  /* Show only active wrapper based on parent class */
+  .home-main.show-home .hero-wrapper,
+  .home-main.show-services .services-wrapper,
+  .home-main.show-about .about-wrapper,
+  .home-main.show-booking .booking-wrapper {
+    display: block !important;
+  }
+}
+

@@ -252,12 +252,12 @@ export default function BlogAdminPage() {
 
   if (!authed) {
     return (
-      <main style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--cream)', padding: '100px 1.5rem 2rem' }}>
-        <div style={{ background: 'var(--white)', border: '1px solid var(--border)', borderRadius: 24, padding: '3.5rem 2.5rem', width: '100%', maxWidth: 440, boxShadow: 'var(--shadow)', textAlign: 'center' }}>
+      <main style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: 'var(--cream)', padding: '100px 1.5rem 2rem' }}>
+        <div style={{ background: 'var(--white)', border: '1px solid var(--border)', borderRadius: 24, padding: '3.5rem 2.5rem', width: '100%', maxWidth: 460, boxShadow: 'var(--shadow)', textAlign: 'center' }}>
           <div style={{ marginBottom: '2rem' }}>
             <span style={{ fontSize: '3rem', display: 'inline-block', marginBottom: '1rem', filter: 'drop-shadow(0 4px 6px rgba(15,35,24,0.1))' }}>🛡️</span>
             <h1 className="serif" style={{ fontSize: '2rem', fontWeight: 700, color: 'var(--forest)' }}>Administrator Portal</h1>
-            <p style={{ fontSize: '0.88rem', color: 'var(--muted)', marginTop: '0.4rem' }}>Enter key to manage ErgoAfya blog &amp; news posts</p>
+            <p style={{ fontSize: '0.88rem', color: 'var(--muted)', marginTop: '0.4rem' }}>Enter access key to manage ErgoAfya blog &amp; news posts</p>
           </div>
           
           <div style={{ textAlign: 'left', marginBottom: '1.5rem' }}>
@@ -303,22 +303,42 @@ export default function BlogAdminPage() {
             {authLoading ? 'Verifying Credentials...' : 'Authenticate Access →'}
           </button>
         </div>
+
+        {/* Access key instructions card */}
+        <div style={{ marginTop: '2rem', background: '#fff', border: '1px dashed var(--border)', borderRadius: 16, padding: '1.5rem', maxWidth: 460, fontSize: '0.8rem', color: 'var(--muted)', lineHeight: 1.5 }}>
+          <h4 style={{ color: 'var(--forest)', fontWeight: 700, marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+            💡 Where is the admin key configured?
+          </h4>
+          <p style={{ marginBottom: '0.6rem' }}>
+            The access secret is managed via the environment variable <strong><code>ADMIN_SECRET</code></strong>:
+          </p>
+          <ul style={{ paddingLeft: '1.2rem', display: 'grid', gap: '0.4rem' }}>
+            <li><strong>Local Development:</strong> Stored in <code>.env.local</code> as <code>ADMIN_SECRET=...</code></li>
+            <li><strong>Production:</strong> Configure it as an encrypted Environment Variable in Cloudflare Workers settings.</li>
+          </ul>
+        </div>
       </main>
     )
   }
 
+  // Calculate dynamic dashboard stats
+  const totalPostsCount = posts.length
+  const publishedCount = posts.filter(p => p.published).length
+  const draftsCount = posts.filter(p => !p.published).length
+  const uniqueCategories = Array.from(new Set(posts.map(p => p.category || 'Announcement'))).length
+
   return (
     <main style={{ paddingTop: 72, background: 'var(--cream)', minHeight: '100vh' }}>
-      {/* Header section */}
-      <div style={{ background: 'var(--forest)', padding: '3.5rem 5vw 3rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1.5rem' }}>
+      {/* Header section with rich gradient */}
+      <div className="admin-gradient-header" style={{ padding: '3.5rem 5vw 3rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1.5rem' }}>
         <div>
-          <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', background: 'rgba(126,212,166,0.15)', color: 'var(--mint)', fontSize: '0.68rem', fontWeight: 700, padding: '0.3rem 0.7rem', borderRadius: 100, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.6rem' }}>
-            ● Session Authenticated
+          <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', background: 'rgba(255,255,255,0.15)', color: 'var(--mint)', fontSize: '0.68rem', fontWeight: 700, padding: '0.3rem 0.7rem', borderRadius: 100, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.6rem' }}>
+            ● Live Publishing Connection
           </span>
           <h1 className="serif" style={{ color: 'var(--cream)', fontSize: '2.5rem', fontWeight: 700, lineHeight: 1.1 }}>
             ErgoAfya Publishing Hub
           </h1>
-          <p style={{ color: 'rgba(246,242,235,0.6)', fontSize: '0.9rem', marginTop: '0.4rem' }}>
+          <p style={{ color: 'rgba(246,242,235,0.75)', fontSize: '0.9rem', marginTop: '0.4rem' }}>
             Create and publish articles to educate and grow Kenyan businesses.
           </p>
         </div>
@@ -326,9 +346,9 @@ export default function BlogAdminPage() {
         <button
           onClick={handleLogout}
           style={{
-            background: 'rgba(255,255,255,0.06)',
+            background: 'rgba(255,255,255,0.08)',
             color: 'var(--cream)',
-            border: '1px solid rgba(255,255,255,0.15)',
+            border: '1px solid rgba(255,255,255,0.2)',
             borderRadius: 100,
             padding: '0.6rem 1.3rem',
             fontFamily: "'Outfit', sans-serif",
@@ -338,19 +358,39 @@ export default function BlogAdminPage() {
             transition: 'all 0.25s',
           }}
           onMouseEnter={e => {
-            e.currentTarget.style.background = '#d94624'
-            e.currentTarget.style.borderColor = '#d94624'
+            e.currentTarget.style.background = '#e06c5c'
+            e.currentTarget.style.borderColor = '#e06c5c'
           }}
           onMouseLeave={e => {
-            e.currentTarget.style.background = 'rgba(255,255,255,0.06)'
-            e.currentTarget.style.borderColor = 'rgba(255,255,255,0.15)'
+            e.currentTarget.style.background = 'rgba(255,255,255,0.08)'
+            e.currentTarget.style.borderColor = 'rgba(255,255,255,0.2)'
           }}
         >
           🔒 Lock Dashboard
         </button>
       </div>
 
-      <div className="section" style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr', gap: '3rem', alignItems: 'start', paddingBottom: '6rem' }}>
+      {/* Colorful dashboard statistics row */}
+      <div style={{ padding: '2rem 5vw 0', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.2rem' }}>
+        <div className="admin-stat-card" style={{ background: 'var(--white)', borderLeft: '4px solid var(--sage)' }}>
+          <div style={{ fontSize: '0.75rem', color: 'var(--muted)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Total Articles</div>
+          <div style={{ fontSize: '2rem', fontWeight: 700, color: 'var(--forest)', marginTop: '0.2rem' }}>{totalPostsCount}</div>
+        </div>
+        <div className="admin-stat-card" style={{ background: 'var(--white)', borderLeft: '4px solid var(--mint)' }}>
+          <div style={{ fontSize: '0.75rem', color: 'var(--muted)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Published</div>
+          <div style={{ fontSize: '2rem', fontWeight: 700, color: 'var(--leaf)', marginTop: '0.2rem' }}>{publishedCount}</div>
+        </div>
+        <div className="admin-stat-card" style={{ background: 'var(--white)', borderLeft: '4px solid var(--warm)' }}>
+          <div style={{ fontSize: '0.75rem', color: 'var(--muted)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Drafts</div>
+          <div style={{ fontSize: '2rem', fontWeight: 700, color: 'var(--earth)', marginTop: '0.2rem' }}>{draftsCount}</div>
+        </div>
+        <div className="admin-stat-card" style={{ background: 'var(--white)', borderLeft: '4px solid var(--purple)' }}>
+          <div style={{ fontSize: '0.75rem', color: 'var(--muted)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Categories</div>
+          <div style={{ fontSize: '2rem', fontWeight: 700, color: 'var(--forest)', marginTop: '0.2rem' }}>{uniqueCategories}</div>
+        </div>
+      </div>
+
+      <div className="section" style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr', gap: '3rem', alignItems: 'start', paddingBottom: '6rem', paddingTop: '2rem' }}>
         
         {/* Left Column: Post Composer */}
         <div style={{ background: 'var(--white)', border: '1px solid var(--border)', borderRadius: 24, padding: '2.5rem', boxShadow: '0 4px 20px rgba(15,35,24,0.02)' }}>

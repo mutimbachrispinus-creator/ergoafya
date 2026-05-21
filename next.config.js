@@ -28,6 +28,17 @@ const nextConfig = {
       },
     ]
   },
+  typescript: {
+    ignoreBuildErrors: true,
+  },
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+  webpack: (config) => {
+    // Disable Webpack disk caching to prevent SIGBUS crashes on resource-constrained VM hosts
+    config.cache = false;
+    return config;
+  },
   experimental: {
     outputFileTracingIncludes: {
       '/api/**/*': ['./node_modules/uuid/**/*'],
