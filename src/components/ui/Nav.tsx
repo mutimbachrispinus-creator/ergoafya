@@ -41,12 +41,10 @@ export default function Nav() {
           className="hide-mobile">
         {links.map(l => (
           <li key={l.href}>
-            <Link href={l.href} style={{
+            <Link href={l.href} className="nav-link" style={{
               textDecoration:'none', color:'#4a6358', fontWeight:500,
               fontSize:'.875rem', transition:'color .25s',
-            }}
-            onMouseEnter={e=>(e.currentTarget.style.color='#1d5c38')}
-            onMouseLeave={e=>(e.currentTarget.style.color='#4a6358')}>
+            }}>
               {l.label}
             </Link>
           </li>

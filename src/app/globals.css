@@ -137,6 +137,11 @@ body {
 @media (min-width: 769px) { .hide-desktop { display: none !important; } }
 @media (max-width: 768px)  { .hide-mobile  { display: none !important; } }
 
+/* shared link hover states */
+.nav-link:hover { color: var(--leaf) !important; }
+.footer-link:hover,
+.footer-contact-link:hover { color: var(--sage) !important; }
+
 /* footer responsive */
 @media (max-width: 900px)  { .footer-grid { grid-template-columns: 1fr 1fr !important; gap: 2rem !important; } }
 @media (max-width: 480px)  { .footer-grid { grid-template-columns: 1fr !important; } }

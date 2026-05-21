@@ -37,11 +37,9 @@ export default function Footer() {
             letterSpacing:'.08em',color:'rgba(246,242,235,.65)',marginBottom:'1rem'}}>Services</h4>
           <ul style={{listStyle:'none',display:'grid',gap:'.55rem'}}>
             {services.map(s=>(
-              <li key={s}><Link href="/#services"
+              <li key={s}><Link href="/#services" className="footer-link"
                 style={{color:'rgba(246,242,235,.4)',textDecoration:'none',fontSize:'.82rem',
-                  transition:'color .2s'}}
-                onMouseEnter={e=>(e.currentTarget.style.color='#4aac78')}
-                onMouseLeave={e=>(e.currentTarget.style.color='rgba(246,242,235,.4)')}>
+                  transition:'color .2s'}}>
                 {s}
               </Link></li>
             ))}
@@ -53,10 +51,8 @@ export default function Footer() {
             letterSpacing:'.08em',color:'rgba(246,242,235,.65)',marginBottom:'1rem'}}>Company</h4>
           <ul style={{listStyle:'none',display:'grid',gap:'.55rem'}}>
             {company.map(c=>(
-              <li key={c.href}><Link href={c.href}
-                style={{color:'rgba(246,242,235,.4)',textDecoration:'none',fontSize:'.82rem',transition:'color .2s'}}
-                onMouseEnter={e=>(e.currentTarget.style.color='#4aac78')}
-                onMouseLeave={e=>(e.currentTarget.style.color='rgba(246,242,235,.4)')}>
+              <li key={c.href}><Link href={c.href} className="footer-link"
+                style={{color:'rgba(246,242,235,.4)',textDecoration:'none',fontSize:'.82rem',transition:'color .2s'}}>
                 {c.label}
               </Link></li>
             ))}
@@ -74,10 +70,8 @@ export default function Footer() {
               {icon:'📍', text:'Upperhill Gardens, 3rd Ngong Ave, Nairobi', href:'/#booking'},
             ].map(item=>(
               <li key={item.href}>
-                <a href={item.href} style={{color:'rgba(246,242,235,.45)',textDecoration:'none',
-                  display:'flex',gap:'.5rem',alignItems:'flex-start',lineHeight:1.5,transition:'color .2s'}}
-                  onMouseEnter={e=>(e.currentTarget.style.color='#4aac78')}
-                  onMouseLeave={e=>(e.currentTarget.style.color='rgba(246,242,235,.45)')}>
+                <a href={item.href} className="footer-contact-link" style={{color:'rgba(246,242,235,.45)',textDecoration:'none',
+                  display:'flex',gap:'.5rem',alignItems:'flex-start',lineHeight:1.5,transition:'color .2s'}}>
                   <span>{item.icon}</span><span>{item.text}</span>
                 </a>
               </li>
