@@ -1,5 +1,7 @@
 import { initializeApp, getApps, getApp } from 'firebase/app'
+// @ts-ignore
 import { getFirestore } from 'firebase/firestore'
+// @ts-ignore
 import { getStorage } from 'firebase/storage'
 
 const firebaseConfig = {
