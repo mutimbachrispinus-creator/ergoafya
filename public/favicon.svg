@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1d5c38"/>
+      <stop offset="100%" stop-color="#0f2318"/>
+    </linearGradient>
+    <linearGradient id="sw" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#7ed4a6"/>
+      <stop offset="100%" stop-color="#4aac78"/>
+    </linearGradient>
+  </defs>
+  <!-- Rounded square background -->
+  <rect x="2" y="2" width="60" height="60" rx="14" fill="url(#bg)"/>
+  <!-- Simplified seated figure -->
+  <!-- Head -->
+  <circle cx="36" cy="14" r="5" fill="none" stroke="#f6f2eb" stroke-width="2.2"/>
+  <!-- Torso -->
+  <path d="M 36 19 Q 35 27 33 33" fill="none" stroke="#f6f2eb" stroke-width="2.2" stroke-linecap="round"/>
+  <!-- Pelvis to seat -->
+  <path d="M 33 33 Q 31 37 27 41 Q 25 43 25 44" fill="none" stroke="#f6f2eb" stroke-width="2.2" stroke-linecap="round"/>
+  <!-- Seat -->
+  <path d="M 22 44 L 42 44" stroke="#f6f2eb" stroke-width="2" stroke-linecap="round"/>
+  <!-- Chair back -->
+  <path d="M 42 32 L 42 44" stroke="#f6f2eb" stroke-width="2" stroke-linecap="round"/>
+  <!-- Leg -->
+  <path d="M 38 44 L 39 52" stroke="#f6f2eb" stroke-width="2" stroke-linecap="round"/>
+  <!-- Chair base -->
+  <path d="M 26 54 L 38 54" stroke="#f6f2eb" stroke-width="1.8" stroke-linecap="round"/>
+  <path d="M 32 44 L 32 54" stroke="#f6f2eb" stroke-width="1.8" stroke-linecap="round"/>
+  <!-- Spine dots -->
+  <circle cx="34.5" cy="22" r="1.8" fill="url(#sw)"/>
+  <circle cx="34" cy="27" r="1.6" fill="url(#sw)"/>
+  <circle cx="33.5" cy="31.5" r="1.4" fill="url(#sw)"/>
+  <!-- Swoosh -->
+  <path d="M 19 16 Q 14 26 18 34 Q 22 42 17 50" stroke="url(#sw)" stroke-width="3" fill="none" stroke-linecap="round"/>
+</svg>

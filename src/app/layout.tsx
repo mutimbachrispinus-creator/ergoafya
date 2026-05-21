@@ -16,7 +16,7 @@ export const metadata: Metadata = {
     locale: 'en_KE',
     type: 'website',
   },
-  icons: { icon: '/logo.svg', apple: '/logo.svg' },
+  icons: { icon: '/favicon.svg', apple: '/logo.svg' },
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

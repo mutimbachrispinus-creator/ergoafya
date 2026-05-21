@@ -22,38 +22,74 @@ export function ErgoAfyaLogo({ size = 48, variant = 'horizontal', className = ''
         aria-label="ErgoAfya Solutions Logo"
       >
         <defs>
-          <style>{`
-            .r1{fill:none;stroke:#1d5c38;stroke-width:4}
-            .r2{fill:none;stroke:#4aac78;stroke-width:2;stroke-dasharray:3 3}
-            .bd{fill:none;stroke:#0f2318;stroke-width:3.5;stroke-linecap:round;stroke-linejoin:round}
-            .sd{fill:#4aac78}
-            .sw{fill:none;stroke:#4aac78;stroke-linecap:round}
-          `}</style>
+          <linearGradient id="logoRingGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#1d5c38"/>
+            <stop offset="100%" stopColor="#4aac78"/>
+          </linearGradient>
+          <linearGradient id="logoSwooshGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stopColor="#4aac78"/>
+            <stop offset="50%" stopColor="#2d7a4f"/>
+            <stop offset="100%" stopColor="#4aac78"/>
+          </linearGradient>
+          <linearGradient id="logoBodyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#0f2318"/>
+            <stop offset="100%" stopColor="#1d5c38"/>
+          </linearGradient>
+          <filter id="logoGlow" x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur stdDeviation="2" result="blur"/>
+            <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+          </filter>
         </defs>
-        <ellipse cx="100" cy="100" rx="95" ry="95" className="r1"/>
-        <ellipse cx="100" cy="100" rx="88" ry="88" className="r2"/>
-        <circle cx="108" cy="42" r="10" fill="none" stroke="#0f2318" strokeWidth="3"/>
-        <path d="M108 52 Q106 72 102 88" className="bd"/>
-        <path d="M72 118 L118 118" stroke="#0f2318" strokeWidth="3.5" strokeLinecap="round"/>
-        <path d="M95 118 L95 148" stroke="#0f2318" strokeWidth="3" strokeLinecap="round"/>
-        <path d="M78 148 L112 148" stroke="#0f2318" strokeWidth="3" strokeLinecap="round"/>
-        <path d="M118 88 L118 118" stroke="#0f2318" strokeWidth="3" strokeLinecap="round"/>
-        <path d="M102 88 Q98 100 85 112 Q80 116 80 118" className="bd"/>
-        <path d="M85 118 L112 118" stroke="#0f2318" strokeWidth="3.5" strokeLinecap="round"/>
-        <path d="M112 118 L115 145" stroke="#0f2318" strokeWidth="3" strokeLinecap="round"/>
-        <path d="M115 145 L126 148" stroke="#0f2318" strokeWidth="2.5" strokeLinecap="round"/>
-        <path d="M106 65 Q120 72 124 90" stroke="#0f2318" strokeWidth="2.8" strokeLinecap="round" fill="none"/>
-        {[59,67,75,83,91,98].map((y, i) => (
-          <circle key={y} cx={104-i*0.8} cy={y} r={2.8 - i*0.1} className="sd"/>
-        ))}
-        <path d="M68 52 Q58 70 65 90 Q72 110 62 130" stroke="#4aac78" strokeWidth="5" fill="none" strokeLinecap="round"/>
-        <path d="M75 48 Q63 68 72 92 Q80 115 68 138" stroke="#4aac78" strokeWidth="3" fill="none" strokeLinecap="round" opacity="0.55"/>
+
+        {/* Subtle background */}
+        <circle cx="100" cy="100" r="97" fill="#f6f2eb" opacity="0.4"/>
+
+        {/* Rings */}
+        <circle cx="100" cy="100" r="95" fill="none" stroke="url(#logoRingGrad)" strokeWidth="3.5"/>
+        <circle cx="100" cy="100" r="88" fill="none" stroke="#4aac78" strokeWidth="1.5" strokeDasharray="4 3" opacity="0.6"/>
+
+        {/* Swoosh */}
+        <path d="M 68 50 Q 55 72 64 92 Q 73 112 60 135" stroke="url(#logoSwooshGrad)" strokeWidth="5.5" fill="none" strokeLinecap="round" filter="url(#logoGlow)"/>
+        <path d="M 76 46 Q 62 68 72 94 Q 82 118 67 142" stroke="#4aac78" strokeWidth="2.5" fill="none" strokeLinecap="round" opacity="0.4"/>
+
+        {/* Head */}
+        <circle cx="108" cy="42" r="10" fill="none" stroke="url(#logoBodyGrad)" strokeWidth="3"/>
+        <path d="M 116 38 Q 118 35 117 42" stroke="#0f2318" strokeWidth="1.5" fill="none" strokeLinecap="round" opacity="0.5"/>
+
+        {/* Torso */}
+        <path d="M 108 52 Q 106 72 102 88" fill="none" stroke="url(#logoBodyGrad)" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round"/>
+
+        {/* Chair */}
+        <path d="M 120 84 Q 122 95 120 106 Q 119 112 118 118" stroke="#0f2318" strokeWidth="2.8" strokeLinecap="round" fill="none"/>
+        <path d="M 72 118 L 120 118" stroke="#0f2318" strokeWidth="3.5" strokeLinecap="round"/>
+        <path d="M 96 118 L 96 144" stroke="#0f2318" strokeWidth="2.5" strokeLinecap="round"/>
+        <path d="M 78 148 L 114 148" stroke="#0f2318" strokeWidth="2.5" strokeLinecap="round"/>
+        <circle cx="80" cy="150" r="2.5" fill="#0f2318" opacity="0.4"/>
+        <circle cx="112" cy="150" r="2.5" fill="#0f2318" opacity="0.4"/>
+
+        {/* Pelvis + legs */}
+        <path d="M 102 88 Q 98 100 85 112 Q 80 116 80 118" fill="none" stroke="url(#logoBodyGrad)" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round"/>
+        <path d="M 85 118 L 114 118" stroke="#0f2318" strokeWidth="3.5" strokeLinecap="round"/>
+        <path d="M 114 118 L 116 144" stroke="#0f2318" strokeWidth="2.8" strokeLinecap="round"/>
+        <path d="M 116 144 L 127 147" stroke="#0f2318" strokeWidth="2.2" strokeLinecap="round"/>
+
+        {/* Arms */}
+        <path d="M 106 65 Q 118 70 122 82" stroke="#0f2318" strokeWidth="2.8" strokeLinecap="round" fill="none"/>
+        <path d="M 122 82 Q 126 86 130 86" stroke="#0f2318" strokeWidth="2" strokeLinecap="round" fill="none" opacity="0.7"/>
+
+        {/* Spine vertebrae with progressive opacity */}
+        <circle cx="104" cy="58" r="3" fill="#4aac78" opacity="0.95"/>
+        <circle cx="103.3" cy="66" r="2.8" fill="#4aac78" opacity="0.9"/>
+        <circle cx="102.6" cy="74" r="2.6" fill="#4aac78" opacity="0.85"/>
+        <circle cx="102" cy="82" r="2.4" fill="#4aac78" opacity="0.8"/>
+        <circle cx="101" cy="89.5" r="2.2" fill="#4aac78" opacity="0.7"/>
+        <circle cx="100" cy="96" r="2" fill="#4aac78" opacity="0.6"/>
       </svg>
     )
   }
 
   if (variant === 'full') {
-    // Full circular badge
+    // Full circular badge with text
     return (
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -64,27 +100,61 @@ export function ErgoAfyaLogo({ size = 48, variant = 'horizontal', className = ''
         aria-label="ErgoAfya Solutions"
       >
         <defs>
+          <linearGradient id="fRingGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#1d5c38"/>
+            <stop offset="100%" stopColor="#4aac78"/>
+          </linearGradient>
+          <linearGradient id="fSwooshGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stopColor="#4aac78"/>
+            <stop offset="50%" stopColor="#2d7a4f"/>
+            <stop offset="100%" stopColor="#4aac78"/>
+          </linearGradient>
+          <linearGradient id="fBodyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#0f2318"/>
+            <stop offset="100%" stopColor="#1d5c38"/>
+          </linearGradient>
+          <filter id="fGlow" x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur stdDeviation="2" result="blur"/>
+            <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+          </filter>
           <path id="tArc" d="M 100,100 m -72,0 a 72,72 0 1,1 144,0"/>
           <path id="bArc" d="M 100,100 m -68,0 a 68,68 0 0,0 136,0"/>
         </defs>
-        <ellipse cx="100" cy="100" rx="95" ry="95" fill="none" stroke="#1d5c38" strokeWidth="4"/>
-        <ellipse cx="100" cy="100" rx="88" ry="88" fill="none" stroke="#4aac78" strokeWidth="2" strokeDasharray="3 3"/>
-        <circle cx="108" cy="42" r="10" fill="none" stroke="#0f2318" strokeWidth="3"/>
-        <path d="M108 52 Q106 72 102 88" fill="none" stroke="#0f2318" strokeWidth="3.5" strokeLinecap="round"/>
-        <path d="M72 118 L118 118" stroke="#0f2318" strokeWidth="3.5" strokeLinecap="round"/>
-        <path d="M95 118 L95 148" stroke="#0f2318" strokeWidth="3" strokeLinecap="round"/>
-        <path d="M78 148 L112 148" stroke="#0f2318" strokeWidth="3" strokeLinecap="round"/>
-        <path d="M118 88 L118 118" stroke="#0f2318" strokeWidth="3" strokeLinecap="round"/>
-        <path d="M102 88 Q98 100 85 112 Q80 116 80 118" fill="none" stroke="#0f2318" strokeWidth="3.5" strokeLinecap="round"/>
-        <path d="M85 118 L112 118" stroke="#0f2318" strokeWidth="3.5" strokeLinecap="round"/>
-        <path d="M112 118 L115 145" stroke="#0f2318" strokeWidth="3" strokeLinecap="round"/>
-        <path d="M115 145 L126 148" stroke="#0f2318" strokeWidth="2.5" strokeLinecap="round"/>
-        <path d="M106 65 Q120 72 124 90" stroke="#0f2318" strokeWidth="2.8" strokeLinecap="round" fill="none"/>
-        {[59,67,75,83,91,98].map((y, i) => (
-          <circle key={y} cx={104-i*0.8} cy={y} r={2.8 - i*0.1} fill="#4aac78"/>
-        ))}
-        <path d="M68 52 Q58 70 65 90 Q72 110 62 130" stroke="#4aac78" strokeWidth="5" fill="none" strokeLinecap="round"/>
-        <path d="M75 48 Q63 68 72 92 Q80 115 68 138" stroke="#4aac78" strokeWidth="3" fill="none" strokeLinecap="round" opacity="0.55"/>
+
+        <circle cx="100" cy="100" r="97" fill="#f6f2eb" opacity="0.4"/>
+        <circle cx="100" cy="100" r="95" fill="none" stroke="url(#fRingGrad)" strokeWidth="3.5"/>
+        <circle cx="100" cy="100" r="88" fill="none" stroke="#4aac78" strokeWidth="1.5" strokeDasharray="4 3" opacity="0.6"/>
+
+        {/* Swoosh */}
+        <path d="M 68 50 Q 55 72 64 92 Q 73 112 60 135" stroke="url(#fSwooshGrad)" strokeWidth="5.5" fill="none" strokeLinecap="round" filter="url(#fGlow)"/>
+        <path d="M 76 46 Q 62 68 72 94 Q 82 118 67 142" stroke="#4aac78" strokeWidth="2.5" fill="none" strokeLinecap="round" opacity="0.4"/>
+
+        {/* Figure */}
+        <circle cx="108" cy="42" r="10" fill="none" stroke="url(#fBodyGrad)" strokeWidth="3"/>
+        <path d="M 116 38 Q 118 35 117 42" stroke="#0f2318" strokeWidth="1.5" fill="none" strokeLinecap="round" opacity="0.5"/>
+        <path d="M 108 52 Q 106 72 102 88" fill="none" stroke="url(#fBodyGrad)" strokeWidth="3.5" strokeLinecap="round"/>
+        <path d="M 120 84 Q 122 95 120 106 Q 119 112 118 118" stroke="#0f2318" strokeWidth="2.8" strokeLinecap="round" fill="none"/>
+        <path d="M 72 118 L 120 118" stroke="#0f2318" strokeWidth="3.5" strokeLinecap="round"/>
+        <path d="M 96 118 L 96 144" stroke="#0f2318" strokeWidth="2.5" strokeLinecap="round"/>
+        <path d="M 78 148 L 114 148" stroke="#0f2318" strokeWidth="2.5" strokeLinecap="round"/>
+        <circle cx="80" cy="150" r="2.5" fill="#0f2318" opacity="0.4"/>
+        <circle cx="112" cy="150" r="2.5" fill="#0f2318" opacity="0.4"/>
+        <path d="M 102 88 Q 98 100 85 112 Q 80 116 80 118" fill="none" stroke="url(#fBodyGrad)" strokeWidth="3.5" strokeLinecap="round"/>
+        <path d="M 85 118 L 114 118" stroke="#0f2318" strokeWidth="3.5" strokeLinecap="round"/>
+        <path d="M 114 118 L 116 144" stroke="#0f2318" strokeWidth="2.8" strokeLinecap="round"/>
+        <path d="M 116 144 L 127 147" stroke="#0f2318" strokeWidth="2.2" strokeLinecap="round"/>
+        <path d="M 106 65 Q 118 70 122 82" stroke="#0f2318" strokeWidth="2.8" strokeLinecap="round" fill="none"/>
+        <path d="M 122 82 Q 126 86 130 86" stroke="#0f2318" strokeWidth="2" strokeLinecap="round" fill="none" opacity="0.7"/>
+
+        {/* Spine */}
+        <circle cx="104" cy="58" r="3" fill="#4aac78" opacity="0.95"/>
+        <circle cx="103.3" cy="66" r="2.8" fill="#4aac78" opacity="0.9"/>
+        <circle cx="102.6" cy="74" r="2.6" fill="#4aac78" opacity="0.85"/>
+        <circle cx="102" cy="82" r="2.4" fill="#4aac78" opacity="0.8"/>
+        <circle cx="101" cy="89.5" r="2.2" fill="#4aac78" opacity="0.7"/>
+        <circle cx="100" cy="96" r="2" fill="#4aac78" opacity="0.6"/>
+
+        {/* Circular text */}
         <text fontFamily="Arial,sans-serif" fontSize="11.5" fontWeight="700" fill="#0f2318" letterSpacing="2.5">
           <textPath href="#tArc" startOffset="8%">ERGOAFYA SOLUTIONS</textPath>
         </text>
@@ -97,9 +167,9 @@ export function ErgoAfyaLogo({ size = 48, variant = 'horizontal', className = ''
 
   // variant === 'horizontal' — icon + text side by side (nav usage)
   return (
-    <div className={`flex items-center gap-3 ${className}`} aria-label="ErgoAfya Solutions">
+    <div style={{ display: 'flex', alignItems: 'center', gap: 10 }} className={className} aria-label="ErgoAfya Solutions">
       <ErgoAfyaLogo size={size} variant="icon" />
-      <div className="flex flex-col leading-tight">
+      <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1 }}>
         <span style={{
           fontFamily: "'Cormorant Garamond', Georgia, serif",
           fontWeight: 700,
@@ -111,11 +181,11 @@ export function ErgoAfyaLogo({ size = 48, variant = 'horizontal', className = ''
           ErgoAfya
         </span>
         <span style={{
-          fontSize: size * 0.2,
+          fontSize: size * 0.18,
           fontWeight: 600,
           color: '#4aac78',
           textTransform: 'uppercase' as const,
-          letterSpacing: '0.1em',
+          letterSpacing: '0.12em',
           lineHeight: 1,
           marginTop: 2,
         }}>
