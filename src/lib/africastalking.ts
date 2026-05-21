@@ -4,6 +4,7 @@
 
 // Dynamic import keeps this server-only (AT SDK uses Node.js APIs)
 async function getAT() {
+  // @ts-expect-error - africastalking lacks TypeScript definitions
   const AfricasTalking = (await import('africastalking')).default
   return AfricasTalking({
     username: process.env.AT_USERNAME!,
