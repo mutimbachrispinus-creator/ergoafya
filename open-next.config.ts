@@ -1,22 +1,27 @@
-// Minimal OpenNext Cloudflare configuration
 export default {
   default: {
     override: {
       wrapper: "cloudflare-node",
       converter: "edge",
-      proxyExternalRequest: "fetch",
-    },
+      incrementalCache: "dummy",
+      tagCache: "dummy",
+      queue: "dummy",
+      proxyExternalRequest: "fetch"
+    }
   },
   middleware: {
     external: true,
     override: {
       wrapper: "cloudflare-edge",
       converter: "edge",
-      proxyExternalRequest: "fetch",
-    },
+      proxyExternalRequest: "fetch"
+    }
+  },
+  dangerous: {
+    enableCacheInterception: false
   },
   edgeExternals: ["node:crypto"],
   cloudflare: {
-    useWorkerdCondition: true,
-  },
+    useWorkerdCondition: true
+  }
 };
