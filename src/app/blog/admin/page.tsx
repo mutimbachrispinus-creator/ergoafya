@@ -90,6 +90,19 @@ export default function BlogAdminPage() {
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
+  // Missing Setup states
+  const [bootstrapSecret, setBootstrapSecret] = useState('')
+  const [setupUsername, setSetupUsername] = useState('')
+  const [setupPassword, setSetupPassword] = useState('')
+  const [setupConfirm, setSetupConfirm] = useState('')
+
+  // Missing Change Creds states
+  const [showChangeCreds, setShowChangeCreds] = useState(false)
+  const [changeCredsLoading, setChangeCredsLoading] = useState(false)
+  const [changeCredsMsg, setChangeCredsMsg] = useState('')
+  const [newUsername, setNewUsername] = useState('')
+  const [newPassword, setNewPassword] = useState('')
+
   // On mount: try stored token, otherwise show login
   useEffect(() => {
     const stored = localStorage.getItem('ergoafya_admin_token')
