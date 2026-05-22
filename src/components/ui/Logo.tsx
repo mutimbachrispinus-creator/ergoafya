@@ -135,21 +135,21 @@ export function ErgoAfyaLogo({ size = 48, variant = 'horizontal', className = ''
         <path d="M 76 46 Q 62 68 72 94 Q 82 118 67 142" stroke="#4aac78" strokeWidth="2.5" fill="none" strokeLinecap="round" opacity="0.4"/>
 
         {/* Figure */}
-        <circle cx="108" cy="42" r="10" fill="none" stroke="url(#fBodyGrad)" strokeWidth="3"/>
-        <path d="M 116 38 Q 118 35 117 42" stroke="#0f2318" strokeWidth="1.5" fill="none" strokeLinecap="round" opacity="0.5"/>
-        <path d="M 108 52 Q 106 72 102 88" fill="none" stroke="url(#fBodyGrad)" strokeWidth="3.5" strokeLinecap="round"/>
-        <path d="M 120 84 Q 122 95 120 106 Q 119 112 118 118" stroke="#0f2318" strokeWidth="2.8" strokeLinecap="round" fill="none"/>
-        <path d="M 72 118 L 120 118" stroke="#0f2318" strokeWidth="3.5" strokeLinecap="round"/>
-        <path d="M 96 118 L 96 144" stroke="#0f2318" strokeWidth="2.5" strokeLinecap="round"/>
-        <path d="M 78 148 L 114 148" stroke="#0f2318" strokeWidth="2.5" strokeLinecap="round"/>
-        <circle cx="80" cy="150" r="2.5" fill="#0f2318" opacity="0.4"/>
-        <circle cx="112" cy="150" r="2.5" fill="#0f2318" opacity="0.4"/>
-        <path d="M 102 88 Q 98 100 85 112 Q 80 116 80 118" fill="none" stroke="url(#fBodyGrad)" strokeWidth="3.5" strokeLinecap="round"/>
-        <path d="M 85 118 L 114 118" stroke="#0f2318" strokeWidth="3.5" strokeLinecap="round"/>
-        <path d="M 114 118 L 116 144" stroke="#0f2318" strokeWidth="2.8" strokeLinecap="round"/>
-        <path d="M 116 144 L 127 147" stroke="#0f2318" strokeWidth="2.2" strokeLinecap="round"/>
-        <path d="M 106 65 Q 118 70 122 82" stroke="#0f2318" strokeWidth="2.8" strokeLinecap="round" fill="none"/>
-        <path d="M 122 82 Q 126 86 130 86" stroke="#0f2318" strokeWidth="2" strokeLinecap="round" fill="none" opacity="0.7"/>
+        <circle cx="108" cy="42" r="10" fill="none" stroke={shinyText ? "url(#goldShiny)" : "url(#fBodyGrad)"} strokeWidth="3"/>
+        <path d="M 116 38 Q 118 35 117 42" stroke={shinyText ? "url(#goldShiny)" : "#0f2318"} strokeWidth="1.5" fill="none" strokeLinecap="round" opacity={shinyText ? 0.8 : 0.5}/>
+        <path d="M 108 52 Q 106 72 102 88" fill="none" stroke={shinyText ? "url(#goldShiny)" : "url(#fBodyGrad)"} strokeWidth="3.5" strokeLinecap="round"/>
+        <path d="M 120 84 Q 122 95 120 106 Q 119 112 118 118" stroke={shinyText ? "url(#goldShiny)" : "#0f2318"} strokeWidth="2.8" strokeLinecap="round" fill="none"/>
+        <path d="M 72 118 L 120 118" stroke={shinyText ? "url(#goldShiny)" : "#0f2318"} strokeWidth="3.5" strokeLinecap="round"/>
+        <path d="M 96 118 L 96 144" stroke={shinyText ? "url(#goldShiny)" : "#0f2318"} strokeWidth="2.5" strokeLinecap="round"/>
+        <path d="M 78 148 L 114 148" stroke={shinyText ? "url(#goldShiny)" : "#0f2318"} strokeWidth="2.5" strokeLinecap="round"/>
+        <circle cx="80" cy="150" r="2.5" fill={shinyText ? "url(#goldShiny)" : "#0f2318"} opacity={shinyText ? 0.8 : 0.4}/>
+        <circle cx="112" cy="150" r="2.5" fill={shinyText ? "url(#goldShiny)" : "#0f2318"} opacity={shinyText ? 0.8 : 0.4}/>
+        <path d="M 102 88 Q 98 100 85 112 Q 80 116 80 118" fill="none" stroke={shinyText ? "url(#goldShiny)" : "url(#fBodyGrad)"} strokeWidth="3.5" strokeLinecap="round"/>
+        <path d="M 85 118 L 114 118" stroke={shinyText ? "url(#goldShiny)" : "#0f2318"} strokeWidth="3.5" strokeLinecap="round"/>
+        <path d="M 114 118 L 116 144" stroke={shinyText ? "url(#goldShiny)" : "#0f2318"} strokeWidth="2.8" strokeLinecap="round"/>
+        <path d="M 116 144 L 127 147" stroke={shinyText ? "url(#goldShiny)" : "#0f2318"} strokeWidth="2.2" strokeLinecap="round"/>
+        <path d="M 106 65 Q 118 70 122 82" stroke={shinyText ? "url(#goldShiny)" : "#0f2318"} strokeWidth="2.8" strokeLinecap="round" fill="none"/>
+        <path d="M 122 82 Q 126 86 130 86" stroke={shinyText ? "url(#goldShiny)" : "#0f2318"} strokeWidth="2" strokeLinecap="round" fill="none" opacity={shinyText ? 0.9 : 0.7}/>
 
         {/* Spine */}
         <circle cx="104" cy="58" r="3" fill="#4aac78" opacity="0.95"/>
