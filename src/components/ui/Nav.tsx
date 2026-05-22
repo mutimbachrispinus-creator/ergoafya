@@ -33,7 +33,7 @@ export default function Nav() {
       transition:'all .4s',
     }}>
       <Link href="/" style={{textDecoration:'none'}}>
-        <ErgoAfyaLogo size={104} variant="full" />
+        <ErgoAfyaLogo size={104} variant="full" shinyText={true} />
       </Link>
 
       {/* Desktop links */}
