@@ -7,9 +7,10 @@ interface LogoProps {
   size?: number
   variant?: 'full' | 'icon' | 'horizontal'
   className?: string
+  shinyText?: boolean
 }
 
-export function ErgoAfyaLogo({ size = 48, variant = 'horizontal', className = '' }: LogoProps) {
+export function ErgoAfyaLogo({ size = 48, variant = 'horizontal', className = '', shinyText = false }: LogoProps) {
   if (variant === 'icon') {
     // Just the emblem — no text
     return (
@@ -118,6 +119,11 @@ export function ErgoAfyaLogo({ size = 48, variant = 'horizontal', className = ''
           </filter>
           <path id="tArc" d="M 100,100 m -72,0 a 72,72 0 1,1 144,0"/>
           <path id="bArc" d="M 100,100 m -68,0 a 68,68 0 0,0 136,0"/>
+          <linearGradient id="goldShiny" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#e8b84b"/>
+            <stop offset="50%" stopColor="#f5d688"/>
+            <stop offset="100%" stopColor="#d4a843"/>
+          </linearGradient>
         </defs>
 
 
@@ -154,10 +160,10 @@ export function ErgoAfyaLogo({ size = 48, variant = 'horizontal', className = ''
         <circle cx="100" cy="96" r="2" fill="#4aac78" opacity="0.6"/>
 
         {/* Circular text */}
-        <text fontFamily="Arial,sans-serif" fontSize="11.5" fontWeight="700" fill="#0f2318" letterSpacing="2.5">
+        <text fontFamily="Arial,sans-serif" fontSize="11.5" fontWeight="700" fill={shinyText ? "url(#goldShiny)" : "#0f2318"} letterSpacing="2.5" filter={shinyText ? "drop-shadow(0px 2px 4px rgba(0,0,0,0.5))" : "none"}>
           <textPath href="#tArc" startOffset="8%">ERGOAFYA SOLUTIONS</textPath>
         </text>
-        <text fontFamily="Arial,sans-serif" fontSize="8.5" fontWeight="600" fill="#1d5c38" letterSpacing="1.8">
+        <text fontFamily="Arial,sans-serif" fontSize="8.5" fontWeight="600" fill={shinyText ? "#7ed4a6" : "#1d5c38"} letterSpacing="1.8" filter={shinyText ? "drop-shadow(0px 1px 2px rgba(0,0,0,0.5))" : "none"}>
           <textPath href="#bArc" startOffset="3%">HEALTHY PEOPLE  •  PRODUCTIVE WORKPLACE</textPath>
         </text>
       </svg>

@@ -122,7 +122,7 @@ export default function HeroSection() {
               <div style={{position:'absolute',top:-30,right:-30,width:120,height:120,
                 borderRadius:'50%',background:'rgba(74,172,120,.15)'}}/>
               <div style={{marginBottom:'1rem',position:'relative',zIndex:1}}>
-                <ErgoAfyaLogo size={128} variant="full" />
+                <ErgoAfyaLogo size={128} variant="full" shinyText={true} />
               </div>
               <h3 className="serif" style={{color:'var(--cream)',fontSize:'1.35rem',
                 fontWeight:700,lineHeight:1.2,position:'relative',zIndex:1}}>

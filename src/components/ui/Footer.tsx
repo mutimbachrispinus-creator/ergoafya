@@ -21,7 +21,7 @@ export default function Footer() {
 
         <div>
           <div style={{marginBottom:'1rem'}}>
-            <ErgoAfyaLogo size={104} variant="full" />
+            <ErgoAfyaLogo size={104} variant="full" shinyText={true} />
           </div>
           <p style={{fontSize:'.83rem',lineHeight:1.7,maxWidth:260,marginTop:'.8rem'}}>
             Kenya-based ergonomics &amp; occupational health consultancy.
