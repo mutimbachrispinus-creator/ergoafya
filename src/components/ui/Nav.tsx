@@ -4,9 +4,9 @@ import Link from 'next/link'
 import { ErgoAfyaLogo } from './Logo'
 
 const links = [
-  { href: '/#about',    label: 'About'    },
-  { href: '/#services', label: 'Services' },
-  { href: '/#approach', label: 'Approach' },
+  { href: '/about',    label: 'About'    },
+  { href: '/services', label: 'Services' },
+  { href: '/about#approach', label: 'Approach' },
   { href: '/blog',      label: 'Insights' },
   { href: '/#clients',  label: 'Clients'  },
 ]
@@ -33,7 +33,7 @@ export default function Nav() {
       transition:'all .4s',
     }}>
       <Link href="/" style={{textDecoration:'none'}}>
-        <ErgoAfyaLogo size={44} variant="horizontal" />
+        <ErgoAfyaLogo size={52} variant="full" />
       </Link>
 
       {/* Desktop links */}
@@ -50,7 +50,7 @@ export default function Nav() {
           </li>
         ))}
         <li>
-          <Link href="/#booking" className="btn btn-primary" style={{padding:'.58rem 1.4rem'}}>
+          <Link href="/booking" className="btn btn-primary" style={{padding:'.58rem 1.4rem'}}>
             Book Assessment
           </Link>
         </li>
@@ -86,7 +86,7 @@ export default function Nav() {
               {l.label}
             </Link>
           ))}
-          <Link href="/#booking" className="btn btn-primary"
+          <Link href="/booking" className="btn btn-primary"
             onClick={()=>setOpen(false)} style={{textAlign:'center',marginTop:'.5rem'}}>
             Book Assessment
           </Link>

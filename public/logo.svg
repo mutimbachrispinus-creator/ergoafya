@@ -22,7 +22,6 @@
   </defs>
 
   <!-- Subtle background circle -->
-  <circle cx="100" cy="100" r="97" fill="#f6f2eb" opacity="0.4"/>
 
   <!-- Outer ring with gradient -->
   <circle cx="100" cy="100" r="95" fill="none" stroke="url(#ringGrad)" stroke-width="3.5"/>

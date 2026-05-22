@@ -42,7 +42,6 @@ export function ErgoAfyaLogo({ size = 48, variant = 'horizontal', className = ''
         </defs>
 
         {/* Subtle background */}
-        <circle cx="100" cy="100" r="97" fill="#f6f2eb" opacity="0.4"/>
 
         {/* Rings */}
         <circle cx="100" cy="100" r="95" fill="none" stroke="url(#logoRingGrad)" strokeWidth="3.5"/>
@@ -121,7 +120,7 @@ export function ErgoAfyaLogo({ size = 48, variant = 'horizontal', className = ''
           <path id="bArc" d="M 100,100 m -68,0 a 68,68 0 0,0 136,0"/>
         </defs>
 
-        <circle cx="100" cy="100" r="97" fill="#f6f2eb" opacity="0.4"/>
+
         <circle cx="100" cy="100" r="95" fill="none" stroke="url(#fRingGrad)" strokeWidth="3.5"/>
         <circle cx="100" cy="100" r="88" fill="none" stroke="#4aac78" strokeWidth="1.5" strokeDasharray="4 3" opacity="0.6"/>
 

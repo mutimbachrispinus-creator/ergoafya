@@ -348,20 +348,3 @@ body {
   background-clip: text;
 }
 
-/* ═══════════════════════════════════════════
-   HOME PAGE PAGINATION FOR MOBILE VIEW
-   ═══════════════════════════════════════════ */
-@media (max-width: 768px) {
-  .home-main .section-wrapper {
-    display: none !important;
-  }
-  
-  /* Show only active wrapper based on parent class */
-  .home-main.show-home .hero-wrapper,
-  .home-main.show-services .services-wrapper,
-  .home-main.show-about .about-wrapper,
-  .home-main.show-booking .booking-wrapper {
-    display: block !important;
-  }
-}
-

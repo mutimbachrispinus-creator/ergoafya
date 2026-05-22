@@ -5,10 +5,10 @@ import { usePathname } from 'next/navigation'
 
 const PAGES = [
   { href: '/',           icon: '🏠', label: 'Home'     },
-  { href: '/#services',  icon: '⚙️', label: 'Services' },
-  { href: '/#about',     icon: 'ℹ️', label: 'About'    },
+  { href: '/services',   icon: '⚙️', label: 'Services' },
+  { href: '/about',      icon: 'ℹ️', label: 'About'    },
   { href: '/blog',       icon: '📝', label: 'Blog'     },
-  { href: '/#booking',   icon: '📅', label: 'Book'     },
+  { href: '/booking',    icon: '📅', label: 'Book'     },
 ]
 
 export default function MobileNav() {
@@ -26,7 +26,7 @@ export default function MobileNav() {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             const id = entry.target.id
-            if (id) setActiveSection(`/#${id}`)
+            if (id && pathname === '/') setActiveSection(`/#${id}`)
           }
         })
       },
@@ -40,9 +40,8 @@ export default function MobileNav() {
   }, [pathname])
 
   function isActive(href: string) {
-    if (href === '/' && pathname === '/' && activeSection === '/') return true
-    if (href === '/blog' && pathname.startsWith('/blog')) return true
-    if (href.startsWith('/#') && activeSection === href) return true
+    if (href === '/' && pathname === '/') return true
+    if (href !== '/' && pathname.startsWith(href)) return true
     return false
   }
 
