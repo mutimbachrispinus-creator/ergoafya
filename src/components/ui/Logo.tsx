@@ -160,10 +160,10 @@ export function ErgoAfyaLogo({ size = 48, variant = 'horizontal', className = ''
         <circle cx="100" cy="96" r="2" fill="#4aac78" opacity="0.6"/>
 
         {/* Circular text */}
-        <text fontFamily="Arial,sans-serif" fontSize="11.5" fontWeight="700" fill={shinyText ? "url(#goldShiny)" : "#0f2318"} letterSpacing="2.5" filter={shinyText ? "drop-shadow(0px 2px 4px rgba(0,0,0,0.5))" : "none"}>
+        <text fontFamily="Arial,sans-serif" fontSize="11.5" fontWeight="700" fill={shinyText ? "url(#goldShiny)" : "#0f2318"} letterSpacing="2.5" filter={shinyText ? "drop-shadow(0px 2px 3px rgba(15,35,24,0.85))" : "none"} stroke={shinyText ? "rgba(15,35,24,0.7)" : "none"} strokeWidth={shinyText ? "0.4" : "0"}>
           <textPath href="#tArc" startOffset="8%">ERGOAFYA SOLUTIONS</textPath>
         </text>
-        <text fontFamily="Arial,sans-serif" fontSize="8.5" fontWeight="600" fill={shinyText ? "#7ed4a6" : "#1d5c38"} letterSpacing="1.8" filter={shinyText ? "drop-shadow(0px 1px 2px rgba(0,0,0,0.5))" : "none"}>
+        <text fontFamily="Arial,sans-serif" fontSize="8.5" fontWeight="600" fill={shinyText ? "#7ed4a6" : "#1d5c38"} letterSpacing="1.8" filter={shinyText ? "drop-shadow(0px 1px 2px rgba(15,35,24,0.85))" : "none"} stroke={shinyText ? "rgba(15,35,24,0.7)" : "none"} strokeWidth={shinyText ? "0.25" : "0"}>
           <textPath href="#bArc" startOffset="3%">HEALTHY PEOPLE  •  PRODUCTIVE WORKPLACE</textPath>
         </text>
       </svg>
