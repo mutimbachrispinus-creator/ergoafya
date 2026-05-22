@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import crypto from 'crypto'
 
 function sign(token: string): string {
-  const secret = process.env.ADMIN_SECRET || '4f8f0bc0b6313b79eca50f4ae1250093de8443ac262fd6c87409a7265473c51f'
+  const secret = '12345678'
   return crypto.createHmac('sha256', secret).update(token).digest('hex')
 }
 
@@ -32,13 +32,11 @@ export async function GET() {
 }
 
 // POST — login with username + password
-// Username: ADMIN_USERNAME env var (default: "admin")
-// Password: ADMIN_SECRET env var
 export async function POST(req: NextRequest) {
   try {
     const { username, password } = await req.json()
-    const expectedUsername = (process.env.ADMIN_USERNAME || 'admin').toLowerCase().trim()
-    const expectedPassword = process.env.ADMIN_SECRET || '4f8f0bc0b6313b79eca50f4ae1250093de8443ac262fd6c87409a7265473c51f'
+    const expectedUsername = 'admin'
+    const expectedPassword = '12345678'
 
     if (!username || !password) {
       return NextResponse.json({ error: 'Username and password are required.' }, { status: 400 })
