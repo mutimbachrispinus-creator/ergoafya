@@ -19,7 +19,7 @@ export function verifySessionToken(token: string): boolean {
     const payload = decoded.substring(0, lastColon)
     const sig = decoded.substring(lastColon + 1)
     if (sign(payload) !== sig) return false
-    const expires = parseInt(payload.split(':')[2])
+    const expires = parseInt(payload.split(':')[1])
     return Date.now() < expires
   } catch {
     return false
