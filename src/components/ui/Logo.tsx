@@ -66,7 +66,7 @@ export function ErgoAfyaLogo({ size = 48, variant = 'horizontal', className = ''
 
   if (variant === 'icon') {
     return (
-      <svg viewBox="0 0 200 200" width={size} height={size} className={className} aria-label="ErgoAfya Solutions Logo">
+      <svg viewBox="0 0 200 200" width={size} height={size} className={className} aria-label="ErgoAfya Solutions Logo" style={{ display: 'block', overflow: 'visible' }}>
         {defs}
         {coreGraphic}
       </svg>
@@ -75,7 +75,7 @@ export function ErgoAfyaLogo({ size = 48, variant = 'horizontal', className = ''
 
   if (variant === 'full') {
     return (
-      <svg viewBox="0 0 200 200" width={size} height={size} className={className} aria-label="ErgoAfya Solutions">
+      <svg viewBox="0 0 200 200" width={size} height={size} className={className} aria-label="ErgoAfya Solutions" style={{ display: 'block', overflow: 'visible' }}>
         {defs}
         {/* Outer subtle ring */}
         <circle cx="100" cy="100" r="95" fill="none" stroke={shinyText ? "rgba(255,255,255,0.1)" : "#4aac78"} strokeWidth="1.5" strokeDasharray="4 4" opacity="0.5"/>
@@ -94,7 +94,7 @@ export function ErgoAfyaLogo({ size = 48, variant = 'horizontal', className = ''
 
   // variant === 'horizontal'
   return (
-    <svg viewBox="0 0 650 200" width={size * 3.5} height={size} className={className} aria-label="ErgoAfya Solutions">
+    <svg viewBox="0 0 650 200" width={size * 3.5} height={size} className={className} aria-label="ErgoAfya Solutions" style={{ display: 'block', overflow: 'visible' }}>
       {defs}
       {coreGraphic}
       <g transform="translate(190, 110)">
