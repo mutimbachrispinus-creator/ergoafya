@@ -32,15 +32,8 @@ export default function Nav() {
       boxShadow: scrolled ? '0 4px 24px rgba(15,35,24,.07)' : 'none',
       transition:'all .4s',
     }}>
-      <Link href="/" style={{
-        textDecoration:'none', 
-        background: '#0f2318', 
-        borderRadius: '50%', 
-        padding: '2px',
-        display: 'inline-flex',
-        boxShadow: '0 4px 12px rgba(15,35,24,0.2)'
-      }}>
-        <ErgoAfyaLogo size={104} variant="full" shinyText={true} />
+      <Link href="/" style={{textDecoration:'none'}}>
+        <ErgoAfyaLogo size={104} variant="full" />
       </Link>
 
       {/* Desktop links */}

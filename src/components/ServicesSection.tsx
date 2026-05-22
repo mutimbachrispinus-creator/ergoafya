@@ -18,10 +18,14 @@ const SERVICES = [
 export default function ServicesSection() {
   return (
     <section id="services" className="section" style={{background:'var(--white)'}}>
-      <div style={{maxWidth:650,marginBottom:'3.5rem'}}>
-        <p className="sec-eyebrow">Our Services</p>
-        <h2 className="sec-h2">Comprehensive Ergonomic &amp; <em>Occupational Health</em> Solutions</h2>
-        <p className="sec-p">From initial assessment to rehabilitation — we cover every stage of workplace health to keep your people safe, comfortable, and performing at their best.</p>
+      <div style={{display:'flex', alignItems:'flex-end', justifyContent:'space-between', gap:'3rem', flexWrap:'wrap', marginBottom:'4rem'}}>
+        <div style={{maxWidth: 600}}>
+          <p className="sec-eyebrow">Our Services</p>
+          <h2 className="sec-h2" style={{marginBottom: 0}}>Comprehensive Ergonomic &amp;<br/><em>Occupational Health</em> Solutions</h2>
+        </div>
+        <div style={{maxWidth: 450, paddingBottom: '0.5rem'}}>
+          <p className="sec-p" style={{marginBottom: 0}}>From initial assessment to rehabilitation — we cover every stage of workplace health to keep your people safe, comfortable, and performing at their best.</p>
+        </div>
       </div>
       <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:'1.5rem'}}
            className="services-grid">
