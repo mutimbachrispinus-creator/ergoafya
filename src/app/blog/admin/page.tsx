@@ -673,8 +673,30 @@ export default function BlogAdminPage() {
                         </div>
                       </div>
 
-                      {/* Delete actions */}
-                      <div style={{ display: 'flex', gap: '0.4rem', flexShrink: 0 }}>
+                      {/* Actions */}
+                      <div style={{ display: 'flex', gap: '0.6rem', flexShrink: 0, alignItems: 'center' }}>
+                        {!isConfirming && (
+                          <Link
+                            href={`/blog/${p.slug || p.title.toLowerCase().replace(/[^a-z0-9]+/g, '-')}?id=${p.id}`}
+                            target="_blank"
+                            style={{
+                              background: 'transparent',
+                              border: 'none',
+                              color: 'var(--light)',
+                              fontSize: '1rem',
+                              cursor: 'pointer',
+                              padding: '0.2rem 0.4rem',
+                              borderRadius: 6,
+                              transition: 'all 0.2s',
+                              textDecoration: 'none'
+                            }}
+                            onMouseEnter={e => e.currentTarget.style.color = 'var(--sage)'}
+                            onMouseLeave={e => e.currentTarget.style.color = 'var(--light)'}
+                            title="View Article Details"
+                          >
+                            👁️
+                          </Link>
+                        )}
                         {isConfirming ? (
                           <div style={{ display: 'flex', gap: '0.3rem', alignItems: 'center' }}>
                             <button
