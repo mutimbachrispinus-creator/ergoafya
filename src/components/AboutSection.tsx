@@ -10,7 +10,7 @@ export default function AboutSection() {
         <div style={{position:'absolute',top:-80,right:-80,width:300,height:300,
           borderRadius:'50%',background:'rgba(74,172,120,.08)',pointerEvents:'none'}}/>
         <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'4rem',
-          alignItems:'center',position:'relative',zIndex:1}} >
+          alignItems:'center',position:'relative',zIndex:1}} className="about-grid">
 
           <div>
             <p className="sec-eyebrow" style={{color:'var(--mint)'}}>About ErgoAfya</p>
@@ -29,7 +29,7 @@ export default function AboutSection() {
               background:'rgba(255,255,255,.05)',border:'1px solid rgba(74,172,120,.2)',
               borderRadius:14,padding:'1rem 1.3rem',marginTop:'2rem'}}>
               <div style={{width:56,height:56,flexShrink:0}}>
-                <ErgoAfyaLogo size={112} variant="full" shinyText={true}/>
+                <ErgoAfyaLogo size={56} variant="full" shinyText={true}/>
               </div>
               <div>
                 <div style={{fontWeight:700,color:'var(--cream)',fontSize:'.9rem'}}>
