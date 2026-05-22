@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import crypto from 'crypto'
 
 function sign(token: string): string {
-  const secret = '12345678'
+  const secret = 'ergoafya'
   return crypto.createHmac('sha256', secret).update(token).digest('hex')
 }
 
@@ -36,7 +36,7 @@ export async function POST(req: NextRequest) {
   try {
     const { username, password } = await req.json()
     const expectedUsername = 'admin'
-    const expectedPassword = '12345678'
+    const expectedPassword = 'ergoafya'
 
     if (!username || !password) {
       return NextResponse.json({ error: 'Username and password are required.' }, { status: 400 })
