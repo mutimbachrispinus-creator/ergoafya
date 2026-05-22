@@ -10,45 +10,37 @@ interface LogoProps {
 
 export function ErgoAfyaLogo({ size = 48, variant = 'horizontal', className = '', shinyText = false }: LogoProps) {
   
-  // The core graphic is highly reusable. 
-  // It represents a perfect ergonomic setup (desk, monitor, chair, person with perfect posture)
-  // cradled inside a glowing green shield/leaf representing Health & Protection.
+  // The core graphic illustrates a person standing, hunched over, holding their lower back.
+  // A glowing red/orange node clearly indicates the pain point, matching the "occupational health" theme.
   const coreGraphic = (
     <g transform="translate(0, -5)">
-      {/* Inner core - Shield / Leaf representing Afya (Health) */}
-      <path d="M 100,35 C 145,35 160,80 160,110 C 160,150 100,175 100,175 C 100,175 40,150 40,110 C 40,80 55,35 100,35 Z" fill={shinyText ? "rgba(255,255,255,0.03)" : "rgba(74,172,120,0.08)"} stroke={shinyText ? "url(#accentGrad)" : "url(#leafGrad)"} strokeWidth="1.5" strokeDasharray="4 6" />
+      {/* Background medical/health ring */}
+      <circle cx="100" cy="105" r="48" fill="none" stroke={shinyText ? "rgba(255,255,255,0.1)" : "rgba(74,172,120,0.15)"} strokeWidth="1.5" strokeDasharray="3 5" />
+      <circle cx="100" cy="105" r="40" fill={shinyText ? "rgba(255,255,255,0.02)" : "rgba(74,172,120,0.05)"} />
 
-      {/* The Graphic (Ergonomic Setup) */}
       <g filter="url(#glow)">
-        {/* Desk */}
-        <path d="M 110,120 L 150,120" fill="none" stroke={shinyText ? "url(#accentGrad)" : "#1d5c38"} strokeWidth="5" strokeLinecap="round" />
-        <path d="M 140,120 L 140,155" fill="none" stroke={shinyText ? "url(#accentGrad)" : "#1d5c38"} strokeWidth="4.5" strokeLinecap="round" />
+        {/* Person (Hunched in pain, facing left) */}
         
-        {/* Monitor */}
-        <rect x="118" y="82" width="24" height="32" rx="4" fill="none" stroke={shinyText ? "#f5d688" : "url(#leafGrad)"} strokeWidth="4.5" />
-        <path d="M 130,114 L 130,120" stroke={shinyText ? "#f5d688" : "url(#leafGrad)"} strokeWidth="4.5" strokeLinecap="round" />
+        {/* Head dropped forward */}
+        <circle cx="82" cy="62" r="8.5" fill={shinyText ? "#f5d688" : "url(#leafGrad)"} />
         
-        {/* Chair Base & Stem */}
-        <path d="M 65,155 L 85,155" stroke={shinyText ? "url(#accentGrad)" : "#1d5c38"} strokeWidth="4.5" strokeLinecap="round" />
-        <path d="M 75,125 L 75,155" stroke={shinyText ? "url(#accentGrad)" : "#1d5c38"} strokeWidth="4.5" strokeLinecap="round" />
-        <path d="M 60,125 L 85,125" stroke={shinyText ? "url(#accentGrad)" : "#1d5c38"} strokeWidth="5" strokeLinecap="round" />
+        {/* Spine/Body: Hunched forward, back protruding right */}
+        <path d="M 85,75 Q 125,85 105,120 L 100,150" fill="none" stroke={shinyText ? "#f5d688" : "url(#leafGrad)"} strokeWidth="6" strokeLinecap="round" />
         
-        {/* Chair Backrest */}
-        <path d="M 65,125 Q 58,105 65,85" fill="none" stroke={shinyText ? "url(#accentGrad)" : "#1d5c38"} strokeWidth="5" strokeLinecap="round" />
+        {/* Second leg (slightly bent forward for balance) */}
+        <path d="M 103,130 L 115,150" fill="none" stroke={shinyText ? "#f5d688" : "url(#leafGrad)"} strokeWidth="6" strokeLinecap="round" opacity="0.4" />
         
-        {/* Person */}
-        <circle cx="85" cy="65" r="8.5" fill={shinyText ? "#7ed4a6" : "url(#leafGrad)"} />
+        {/* Arm reaching back to hold the lower back */}
+        <path d="M 90,82 Q 95,115 116,105" fill="none" stroke={shinyText ? "#f5d688" : "url(#leafGrad)"} strokeWidth="5" strokeLinecap="round" />
         
-        {/* Spine & Legs (Perfect Ergonomic Angle) */}
-        <path d="M 82,78 Q 92,95 85,118 L 105,118 L 105,145" fill="none" stroke={shinyText ? "#7ed4a6" : "url(#leafGrad)"} strokeWidth="5" strokeLinecap="round" strokeLinejoin="round" />
-        
-        {/* Arm typing */}
-        <path d="M 85,88 L 100,105 L 115,105" fill="none" stroke={shinyText ? "#7ed4a6" : "url(#leafGrad)"} strokeWidth="4.5" strokeLinecap="round" strokeLinejoin="round" />
-        
-        {/* Posture indicators (Glowing dots on joints) */}
-        <circle cx="85" cy="118" r="2.5" fill={shinyText ? "#fff" : "#0f2318"} />
-        <circle cx="105" cy="118" r="2.5" fill={shinyText ? "#fff" : "#0f2318"} />
-        <circle cx="100" cy="105" r="2.5" fill={shinyText ? "#fff" : "#0f2318"} />
+        {/* The Pain Indicator (Glowing red/orange lumbar area) */}
+        <g transform="translate(112, 103)">
+          <circle cx="0" cy="0" r="4" fill="#e74c3c" />
+          <circle cx="0" cy="0" r="8" fill="none" stroke="#e74c3c" strokeWidth="2.5" opacity="0.8" />
+          <circle cx="0" cy="0" r="14" fill="none" stroke="#e74c3c" strokeWidth="1.5" opacity="0.5" strokeDasharray="2 3" />
+          {/* Subtle pulse lines indicating radiating pain */}
+          <path d="M 10,-10 L 15,-15 M 14,0 L 20,0 M 10,10 L 15,15" stroke="#e74c3c" strokeWidth="1.5" strokeLinecap="round" opacity="0.7"/>
+        </g>
       </g>
     </g>
   )
@@ -56,7 +48,7 @@ export function ErgoAfyaLogo({ size = 48, variant = 'horizontal', className = ''
   const defs = (
     <defs>
       <linearGradient id="leafGrad" x1="0%" y1="100%" x2="100%" y2="0%">
-        <stop offset="0%" stopColor="#1d5c38" />
+        <stop offset="0%" stopColor="#0f2318" />
         <stop offset="100%" stopColor="#4aac78" />
       </linearGradient>
       <linearGradient id="accentGrad" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -64,8 +56,9 @@ export function ErgoAfyaLogo({ size = 48, variant = 'horizontal', className = ''
         <stop offset="100%" stopColor="#e8b84b" />
       </linearGradient>
       <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
-        <feDropShadow dx="0" dy="2" stdDeviation="3" floodOpacity={shinyText ? "0.2" : "0.05"} />
+        <feDropShadow dx="0" dy="2" stdDeviation="3" floodOpacity={shinyText ? "0.25" : "0.1"} />
       </filter>
+      {/* Paths for the circular text */}
       <path id="tArc" d="M 100,100 m -82,0 a 82,82 0 1,1 164,0" />
       <path id="bArc" d="M 100,100 m -76,0 a 76,76 0 0,0 152,0" />
     </defs>
@@ -84,11 +77,14 @@ export function ErgoAfyaLogo({ size = 48, variant = 'horizontal', className = ''
     return (
       <svg viewBox="0 0 200 200" width={size} height={size} className={className} aria-label="ErgoAfya Solutions">
         {defs}
+        {/* Outer subtle ring */}
+        <circle cx="100" cy="100" r="95" fill="none" stroke={shinyText ? "rgba(255,255,255,0.1)" : "#4aac78"} strokeWidth="1.5" strokeDasharray="4 4" opacity="0.5"/>
+        
         {/* Circular text */}
         <text fontFamily="'Outfit', sans-serif" fontSize="13.5" fontWeight="800" fill={shinyText ? "#f5d688" : "#0f2318"} letterSpacing="3.5" filter={shinyText ? "drop-shadow(0px 2px 3px rgba(15,35,24,0.7))" : "none"}>
           <textPath href="#tArc" startOffset="50%" textAnchor="middle">ERGOAFYA SOLUTIONS</textPath>
         </text>
-        <text fontFamily="'Outfit', sans-serif" fontSize="9" fontWeight="600" fill={shinyText ? "#7ed4a6" : "#4aac78"} letterSpacing="2.8" filter={shinyText ? "drop-shadow(0px 1px 2px rgba(15,35,24,0.7))" : "none"}>
+        <text fontFamily="'Outfit', sans-serif" fontSize="8.5" fontWeight="600" fill={shinyText ? "#7ed4a6" : "#4aac78"} letterSpacing="2.8" filter={shinyText ? "drop-shadow(0px 1px 2px rgba(15,35,24,0.7))" : "none"}>
           <textPath href="#bArc" startOffset="50%" textAnchor="middle">HEALTHY PEOPLE • PRODUCTIVE WORKPLACE</textPath>
         </text>
         {coreGraphic}
