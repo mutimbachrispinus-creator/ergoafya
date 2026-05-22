@@ -6,9 +6,7 @@ import { ErgoAfyaLogo } from './Logo'
 const links = [
   { href: '/about',    label: 'About'    },
   { href: '/services', label: 'Services' },
-  { href: '/about#approach', label: 'Approach' },
   { href: '/blog',      label: 'Insights' },
-  { href: '/#clients',  label: 'Clients'  },
 ]
 
 export default function Nav() {
@@ -32,8 +30,8 @@ export default function Nav() {
       boxShadow: scrolled ? '0 4px 24px rgba(15,35,24,.07)' : 'none',
       transition:'all .4s',
     }}>
-      <Link href="/" style={{textDecoration:'none'}}>
-        <ErgoAfyaLogo size={104} variant="full" />
+      <Link href="/" style={{textDecoration:'none', display: 'flex', alignItems: 'center'}}>
+        <ErgoAfyaLogo size={42} variant="horizontal" />
       </Link>
 
       {/* Desktop links */}

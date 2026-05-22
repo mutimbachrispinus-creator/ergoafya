@@ -12,7 +12,6 @@ export default function HomePage() {
       {/* Home Page Section */}
       <div className="section-wrapper hero-wrapper">
         <HeroSection />
-        <RibbonBanner />
         <StatsBand />
         <ClientsSection />
         <BlogSection />
