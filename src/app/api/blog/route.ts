@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 import { verifySessionToken } from '@/app/api/blog/auth/route'
-import { db } from '@/lib/firebase'
+import { getDb } from '@/lib/firebase'
 // @ts-ignore
 import { collection, addDoc, getDocs, query, orderBy, limit as fsLimit, where, deleteDoc, doc as fsDoc } from 'firebase/firestore'
 
@@ -26,6 +26,7 @@ export async function GET(req: NextRequest) {
   const adminAccess = isAuthorized(req)
 
   try {
+    const db = getDb()
     const postsRef = collection(db, 'posts')
     let q = query(postsRef, orderBy('createdAt', 'desc'), fsLimit(limitCount))
     
@@ -58,6 +59,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: `Validation error: ${errorMsg}` }, { status: 400 })
   }
   try {
+    const db = getDb()
     const postsRef = collection(db, 'posts')
     const docRef = await addDoc(postsRef, {
       ...parsed.data,
@@ -81,6 +83,7 @@ export async function DELETE(req: NextRequest) {
     const id = searchParams.get('id')
     if (!id) return NextResponse.json({ error: 'Missing post ID' }, { status: 400 })
     
+    const db = getDb()
     await deleteDoc(fsDoc(db, 'posts', id))
     return NextResponse.json({ success: true })
   } catch (e: any) {

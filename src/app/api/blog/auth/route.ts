@@ -35,7 +35,8 @@ function hashPassword(pw: string): string {
 // ── Load credentials from Firestore, falling back to env vars ─────────────────
 async function getCredentials(): Promise<{ username: string; passwordHash: string }> {
   try {
-    const { db } = await import('@/lib/firebase')
+    const { getDb } = await import('@/lib/firebase')
+    const db = getDb()
     // @ts-ignore
     const { doc, getDoc } = await import('firebase/firestore')
     const d = await getDoc(doc(db, '_admin', 'credentials'))
@@ -55,7 +56,8 @@ async function getCredentials(): Promise<{ username: string; passwordHash: strin
 
 // ── Save credentials to Firestore ─────────────────────────────────────────────
 async function saveCredentials(username: string, passwordHash: string) {
-  const { db } = await import('@/lib/firebase')
+  const { getDb } = await import('@/lib/firebase')
+  const db = getDb()
   // @ts-ignore
   const { doc, setDoc } = await import('firebase/firestore')
   await setDoc(doc(db, '_admin', 'credentials'), { username, passwordHash }, { merge: true })

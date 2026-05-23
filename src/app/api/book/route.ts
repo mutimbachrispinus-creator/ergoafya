@@ -37,7 +37,8 @@ export async function POST(req: NextRequest) {
     // ── 1. Save to Firestore (server-side)
     if (process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || process.env.FIREBASE_ADMIN_PROJECT_ID) {
       try {
-        const { db } = await import('@/lib/firebase')
+        const { getDb } = await import('@/lib/firebase')
+        const db = getDb()
         // @ts-ignore
         const { collection, addDoc } = await import('firebase/firestore')
         await addDoc(collection(db, 'bookings'), booking)
