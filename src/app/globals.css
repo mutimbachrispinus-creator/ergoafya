@@ -29,7 +29,7 @@ body {
   font-family: 'Outfit', sans-serif;
   background: var(--cream);
   color: var(--forest);
-  overflow: hidden; /* page-based layout — each panel scrolls internally */
+  overflow-x: hidden;
 }
 
 /* scrollbar */
@@ -179,7 +179,7 @@ body {
   /* Hero mobile */
   .hero-section {
     min-height: auto !important;
-    padding: 2rem 4vw 2.5rem !important;
+    padding: 88px 4vw 2.5rem !important;
   }
   /* Fix blank right side on mobile — collapse to single column */
   .hero-grid {

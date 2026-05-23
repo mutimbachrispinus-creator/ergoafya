@@ -4,8 +4,8 @@ import { ErgoAfyaLogo } from './ui/Logo'
 export default function HeroSection() {
   return (
     <section style={{
-      minHeight: 'calc(100vh - 108px)', display:'grid', gridTemplateColumns:'1fr 1fr',
-      alignItems:'center', padding:'3rem 5vw 3rem 2.5rem', gap:'4rem',
+      minHeight:'100vh', display:'grid', gridTemplateColumns:'1fr 1fr',
+      alignItems:'center', padding:'100px 5vw 60px', gap:'5rem',
       position:'relative', overflow:'hidden', background:'var(--cream)',
     }} className="hero-section hero-grid">
 
