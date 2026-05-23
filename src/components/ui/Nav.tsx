@@ -12,19 +12,79 @@ const links = [
 export default function Nav() {
   const [scrolled, setScrolled] = useState(false)
   const [open,     setOpen]     = useState(false)
+  
+  // Announcement state
+  const [announcement, setAnnouncement] = useState<any>(null)
+  const [annClosed, setAnnClosed] = useState(true) // assume closed until loaded
 
   useEffect(() => {
     const handler = () => setScrolled(window.scrollY > 50)
     window.addEventListener('scroll', handler)
+
+    // Load announcement
+    const dismissedId = localStorage.getItem('ergoafya_dismissed_announcement')
+    fetch('/api/blog')
+      .then(res => res.json())
+      .then(data => {
+        if (data.posts) {
+          const latest = data.posts.find((p: any) => p.published && p.category === 'Announcement')
+          if (latest && latest.id !== dismissedId) {
+            setAnnouncement(latest)
+            setAnnClosed(false)
+          }
+        }
+      })
+      .catch(() => {})
+
     return () => window.removeEventListener('scroll', handler)
   }, [])
 
+  function handleDismiss() {
+    localStorage.setItem('ergoafya_dismissed_announcement', announcement.id)
+    setAnnClosed(true)
+  }
+
+  const hasAnnouncement = announcement && !annClosed
+
   return (
-    <nav style={{
-      position:'fixed', top:36, left:0, right:0, zIndex:200,
-      height:72, display:'flex', alignItems:'center',
-      justifyContent:'space-between', padding:'0 5vw',
-      background: scrolled ? 'rgba(246,242,235,.94)' : 'transparent',
+    <div style={{ position: 'fixed', top: 36, left: 0, right: 0, zIndex: 200, display: 'flex', flexDirection: 'column' }}>
+      {/* ── Announcement Banner ── */}
+      {hasAnnouncement && (
+        <div style={{
+          background: 'linear-gradient(90deg, var(--forest), var(--sage))',
+          color: 'white', padding: '0.5rem 5vw', display: 'flex', alignItems: 'center',
+          justifyContent: 'center', gap: '1rem', width: '100%',
+          fontFamily: "'Outfit', sans-serif"
+        }}>
+          <div style={{ flex: 1, textAlign: 'center', fontSize: '0.85rem' }}>
+            <span style={{
+              background: 'var(--warm)', color: 'var(--forest)', fontSize: '0.65rem',
+              fontWeight: 800, padding: '0.1rem 0.5rem', borderRadius: 100,
+              textTransform: 'uppercase', marginRight: '0.5rem', display: 'inline-block',
+              verticalAlign: 'middle', marginBottom: '2px'
+            }}>
+              📢 Announcement
+            </span>
+            <span style={{ fontWeight: 500, marginRight: '0.5rem' }}>{announcement.title}</span>
+            <Link
+              href={`/blog/${announcement.slug || announcement.title.toLowerCase().replace(/[^a-z0-9]+/g, '-')}?id=${announcement.id}`}
+              style={{ color: 'var(--mint)', fontWeight: 700, textDecoration: 'underline', whiteSpace: 'nowrap' }}
+            >
+              Read Details →
+            </Link>
+          </div>
+          <button
+            onClick={handleDismiss}
+            style={{ background: 'transparent', border: 'none', color: 'rgba(255,255,255,0.7)', cursor: 'pointer', fontSize: '1rem' }}
+          >✕</button>
+        </div>
+      )}
+
+      {/* ── Main Nav ── */}
+      <nav style={{
+        height:72, display:'flex', alignItems:'center',
+        justifyContent:'space-between', padding:'0 5vw',
+        background: scrolled || hasAnnouncement ? 'rgba(246,242,235,.96)' : 'transparent',
       backdropFilter: scrolled ? 'blur(20px)' : 'none',
       borderBottom: scrolled ? '1px solid rgba(74,172,120,.18)' : 'none',
       boxShadow: scrolled ? '0 4px 24px rgba(15,35,24,.07)' : 'none',
@@ -91,6 +151,7 @@ export default function Nav() {
           </Link>
         </div>
       )}
-    </nav>
+      </nav>
+    </div>
   )
 }
