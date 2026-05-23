@@ -3,7 +3,7 @@ import { z } from 'zod'
 import { verifySessionToken } from '@/app/api/blog/auth/route'
 import { getDb } from '@/lib/firebase'
 // @ts-ignore
-import { collection, addDoc, getDocs, query, orderBy, limit as fsLimit, where, deleteDoc, doc as fsDoc } from 'firebase/firestore'
+import { collection, addDoc, getDocs, query, orderBy, limit as fsLimit, where, deleteDoc, doc as fsDoc } from 'firebase/firestore/lite'
 
 const PostSchema = z.object({
   title:     z.string().min(5),

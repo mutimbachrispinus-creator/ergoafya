@@ -1,6 +1,6 @@
 import { initializeApp, getApps, getApp } from 'firebase/app'
 // @ts-ignore
-import { getFirestore } from 'firebase/firestore'
+import { getFirestore } from 'firebase/firestore/lite'
 // @ts-ignore
 import { getStorage } from 'firebase/storage'
 

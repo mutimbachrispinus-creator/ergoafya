@@ -40,7 +40,7 @@ export async function POST(req: NextRequest) {
         const { getDb } = await import('@/lib/firebase')
         const db = getDb()
         // @ts-ignore
-        const { collection, addDoc } = await import('firebase/firestore')
+        const { collection, addDoc } = await import('firebase/firestore/lite')
         await addDoc(collection(db, 'bookings'), booking)
       } catch (e) { console.warn('Firestore write failed:', e) }
     }

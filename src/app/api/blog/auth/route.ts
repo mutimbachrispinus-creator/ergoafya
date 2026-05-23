@@ -38,7 +38,7 @@ async function getCredentials(): Promise<{ username: string; passwordHash: strin
     const { getDb } = await import('@/lib/firebase')
     const db = getDb()
     // @ts-ignore
-    const { doc, getDoc } = await import('firebase/firestore')
+    const { doc, getDoc } = await import('firebase/firestore/lite')
     const d = await getDoc(doc(db, '_admin', 'credentials'))
     if (d.exists()) {
       const data = d.data()!
@@ -59,7 +59,7 @@ async function saveCredentials(username: string, passwordHash: string) {
   const { getDb } = await import('@/lib/firebase')
   const db = getDb()
   // @ts-ignore
-  const { doc, setDoc } = await import('firebase/firestore')
+  const { doc, setDoc } = await import('firebase/firestore/lite')
   await setDoc(doc(db, '_admin', 'credentials'), { username, passwordHash }, { merge: true })
 }
 
