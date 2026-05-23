@@ -92,7 +92,7 @@ export default function BlogPage() {
     : posts.filter(p => p.category === activeCat)
 
   return (
-    <main style={{ paddingTop: 72 }}>
+    <main style={{ paddingTop: 108 }}>
       {/* Hero Section */}
       <div style={{ background: 'var(--forest)', padding: '6rem 5vw 5rem', position: 'relative', overflow: 'hidden' }}>
         <div style={{ position: 'absolute', right: '-10%', top: '-20%', width: '400px', height: '400px', borderRadius: '50%', background: 'radial-gradient(circle, rgba(74,172,120,0.12) 0%, transparent 70%)', pointerEvents: 'none' }} />

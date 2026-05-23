@@ -3,7 +3,7 @@ import ApproachSection from '@/components/ApproachSection'
 
 export default function AboutPage() {
   return (
-    <main style={{ paddingTop: '80px' }}>
+    <main style={{ paddingTop: '108px' }}>
       <AboutSection />
       <ApproachSection />
     </main>

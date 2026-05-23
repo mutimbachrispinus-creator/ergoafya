@@ -19,5 +19,11 @@
   // KV namespace for blog post caching (optional, improves performance)
   // "kv_namespaces": [
   //   { "binding": "BLOG_CACHE", "id": "YOUR_KV_NAMESPACE_ID" }
-  // ]
+  // ],
+  "observability": {
+    "logs": {
+      "enabled": false,
+      "invocation_logs": true
+    }
+  }
 }

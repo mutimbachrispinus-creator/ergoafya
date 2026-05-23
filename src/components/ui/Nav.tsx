@@ -21,7 +21,7 @@ export default function Nav() {
 
   return (
     <nav style={{
-      position:'fixed', top:0, left:0, right:0, zIndex:200,
+      position:'fixed', top:36, left:0, right:0, zIndex:200,
       height:72, display:'flex', alignItems:'center',
       justifyContent:'space-between', padding:'0 5vw',
       background: scrolled ? 'rgba(246,242,235,.94)' : 'transparent',

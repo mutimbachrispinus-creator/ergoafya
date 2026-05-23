@@ -1,5 +1,6 @@
 'use client'
 import { useState, useEffect, useRef } from 'react'
+import Link from 'next/link'
 
 const iStyle: React.CSSProperties = {
   width: '100%',
@@ -361,7 +362,7 @@ export default function BlogAdminPage() {
   const uniqueCategories = Array.from(new Set(posts.map(p => p.category || 'Announcement'))).length
 
   return (
-    <main style={{ paddingTop: 72, background: 'var(--cream)', minHeight: '100vh' }}>
+    <main style={{ paddingTop: 108, background: 'var(--cream)', minHeight: '100vh' }}>
       {/* Change credentials modal */}
       {showChangeCreds && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}>

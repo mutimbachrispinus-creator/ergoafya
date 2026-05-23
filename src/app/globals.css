@@ -167,7 +167,9 @@ body {
 @media (max-width: 768px) {
   .section { padding: 3.5rem 4vw; }
   .hide-mobile { display: none !important; }
-  
+  .topbar { display: none !important; }
+  /* Nav sits at top when topbar is hidden */
+  nav { top: 0 !important; }
   
   /* Adjust WA float for mobile */
   .wa-float { bottom: 20px !important; right: 16px !important; }

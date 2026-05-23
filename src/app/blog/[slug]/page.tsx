@@ -205,7 +205,7 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
 
   if (loading) {
     return (
-      <main style={{ paddingTop: 72, background: 'var(--cream)', minHeight: '100vh' }}>
+      <main style={{ paddingTop: 108, background: 'var(--cream)', minHeight: '100vh' }}>
         <div style={{ background: 'var(--forest)', padding: '5rem 5vw 4rem' }}>
           <div style={{ maxWidth: 720 }}>
             <div style={{ height: 12, background: 'rgba(255,255,255,0.1)', borderRadius: 10, width: '100px', marginBottom: '1rem' }} />
@@ -219,7 +219,7 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
 
   if (!post) {
     return (
-      <main style={{ paddingTop: 72, background: 'var(--cream)', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <main style={{ paddingTop: 108, background: 'var(--cream)', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <div style={{ background: 'var(--white)', border: '1px solid var(--border)', borderRadius: 24, padding: '4rem 2rem', textAlign: 'center', maxWidth: 440, boxShadow: 'var(--shadow)' }}>
           <span style={{ fontSize: '3rem', display: 'block', marginBottom: '1.2rem' }}>⚠️</span>
           <h1 className="serif" style={{ fontSize: '1.8rem', fontWeight: 700, color: 'var(--forest)' }}>Article Not Found</h1>
@@ -252,7 +252,7 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
     : post.date || 'Recent'
 
   return (
-    <main style={{ paddingTop: 72, background: 'var(--cream)', minHeight: '100vh' }}>
+    <main style={{ paddingTop: 108, background: 'var(--cream)', minHeight: '100vh' }}>
       <div style={{ background: 'var(--forest)', padding: '5rem 5vw 4rem', position: 'relative' }}>
         <div style={{ maxWidth: 740, position: 'relative', zIndex: 2 }}>
           <Link href="/blog" style={{
