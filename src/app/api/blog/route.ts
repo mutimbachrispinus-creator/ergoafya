@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 import { verifySessionToken } from '@/app/api/blog/auth/route'
+import { db } from '@/lib/firebase'
+// @ts-ignore
+import { collection, addDoc, getDocs, query, orderBy, limit as fsLimit, where, deleteDoc, doc as fsDoc } from 'firebase/firestore'
 
 const PostSchema = z.object({
   title:     z.string().min(5),
@@ -19,23 +22,26 @@ function isAuthorized(req: NextRequest): boolean {
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url)
-  const limit = parseInt(searchParams.get('limit') || '20')
+  const limitCount = parseInt(searchParams.get('limit') || '20')
   const adminAccess = isAuthorized(req)
 
   try {
-    const { adminDb } = await import('@/lib/firebase-admin')
-    let query = adminDb.collection('posts').orderBy('createdAt', 'desc').limit(limit)
+    const postsRef = collection(db, 'posts')
+    let q = query(postsRef, orderBy('createdAt', 'desc'), fsLimit(limitCount))
+    
     if (!adminAccess) {
-      // @ts-ignore
-      query = query.where('published', '==', true)
+      q = query(postsRef, where('published', '==', true), orderBy('createdAt', 'desc'), fsLimit(limitCount))
     }
-    const snap = await query.get()
-    const posts = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }))
+    
+    const snap = await getDocs(q)
+    const posts = snap.docs.map((doc: any) => ({ id: doc.id, ...doc.data() }))
+    
     const headers: Record<string, string> = adminAccess
       ? { 'Cache-Control': 'no-store, max-age=0' }
       : { 'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600' }
     return NextResponse.json({ posts }, { headers })
-  } catch (e) {
+  } catch (e: any) {
+    console.error('Error fetching posts:', e.message)
     return NextResponse.json({ posts: [], error: 'Could not load posts' }, { status: 500 })
   }
 }
@@ -52,13 +58,13 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: `Validation error: ${errorMsg}` }, { status: 400 })
   }
   try {
-    const { adminDb } = await import('@/lib/firebase-admin')
-    const doc = await adminDb.collection('posts').add({
+    const postsRef = collection(db, 'posts')
+    const docRef = await addDoc(postsRef, {
       ...parsed.data,
       createdAt: new Date().toISOString(),
       slug: parsed.data.title.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,''),
     })
-    return NextResponse.json({ success: true, id: doc.id })
+    return NextResponse.json({ success: true, id: docRef.id })
   } catch (e: any) {
     const msg = e?.message || String(e)
     console.error('[POST /api/blog] Firestore error:', msg)
@@ -74,8 +80,8 @@ export async function DELETE(req: NextRequest) {
     const { searchParams } = new URL(req.url)
     const id = searchParams.get('id')
     if (!id) return NextResponse.json({ error: 'Missing post ID' }, { status: 400 })
-    const { adminDb } = await import('@/lib/firebase-admin')
-    await adminDb.collection('posts').doc(id).delete()
+    
+    await deleteDoc(fsDoc(db, 'posts', id))
     return NextResponse.json({ success: true })
   } catch (e: any) {
     const msg = e?.message || String(e)

@@ -35,11 +35,12 @@ export async function POST(req: NextRequest) {
     }
 
     // ── 1. Save to Firestore (server-side)
-    // Dynamic import keeps firebase-admin out of the client bundle
-    if (process.env.FIREBASE_ADMIN_PROJECT_ID) {
+    if (process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || process.env.FIREBASE_ADMIN_PROJECT_ID) {
       try {
-        const { adminDb } = await import('@/lib/firebase-admin')
-        await adminDb.collection('bookings').add(booking)
+        const { db } = await import('@/lib/firebase')
+        // @ts-ignore
+        const { collection, addDoc } = await import('firebase/firestore')
+        await addDoc(collection(db, 'bookings'), booking)
       } catch (e) { console.warn('Firestore write failed:', e) }
     }
 

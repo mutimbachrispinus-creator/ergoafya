@@ -35,13 +35,17 @@ function hashPassword(pw: string): string {
 // ── Load credentials from Firestore, falling back to env vars ─────────────────
 async function getCredentials(): Promise<{ username: string; passwordHash: string }> {
   try {
-    const { adminDb } = await import('@/lib/firebase-admin')
-    const doc = await adminDb.collection('_admin').doc('credentials').get()
-    if (doc.exists) {
-      const data = doc.data()!
+    const { db } = await import('@/lib/firebase')
+    // @ts-ignore
+    const { doc, getDoc } = await import('firebase/firestore')
+    const d = await getDoc(doc(db, '_admin', 'credentials'))
+    if (d.exists()) {
+      const data = d.data()!
       return { username: data.username, passwordHash: data.passwordHash }
     }
-  } catch {}
+  } catch (e) {
+    console.error('getCredentials error:', e)
+  }
   // Fallback: hash the default hardcoded password
   return {
     username: process.env.ADMIN_USERNAME || 'admin',
@@ -51,8 +55,10 @@ async function getCredentials(): Promise<{ username: string; passwordHash: strin
 
 // ── Save credentials to Firestore ─────────────────────────────────────────────
 async function saveCredentials(username: string, passwordHash: string) {
-  const { adminDb } = await import('@/lib/firebase-admin')
-  await adminDb.collection('_admin').doc('credentials').set({ username, passwordHash }, { merge: true })
+  const { db } = await import('@/lib/firebase')
+  // @ts-ignore
+  const { doc, setDoc } = await import('firebase/firestore')
+  await setDoc(doc(db, '_admin', 'credentials'), { username, passwordHash }, { merge: true })
 }
 
 // ── GET — always returns needsSetup: false ─────────────────────────────────────
