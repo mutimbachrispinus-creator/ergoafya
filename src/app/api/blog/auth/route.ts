@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import crypto from 'crypto'
 
+// ── Session token helpers ──────────────────────────────────────────────────────
 function sign(token: string): string {
-  const secret = 'ergoafya'
+  const secret = process.env.SESSION_SECRET || 'ergoafya_session_secret'
   return crypto.createHmac('sha256', secret).update(token).digest('hex')
 }
 
@@ -26,29 +27,94 @@ export function verifySessionToken(token: string): boolean {
   }
 }
 
-// GET — always returns needsSetup: false (credentials live in env vars)
+// ── Hash passwords with SHA-256 ────────────────────────────────────────────────
+function hashPassword(pw: string): string {
+  return crypto.createHash('sha256').update(pw + 'ergoafya_salt').digest('hex')
+}
+
+// ── Load credentials from Firestore, falling back to env vars ─────────────────
+async function getCredentials(): Promise<{ username: string; passwordHash: string }> {
+  try {
+    const { adminDb } = await import('@/lib/firebase-admin')
+    const doc = await adminDb.collection('_admin').doc('credentials').get()
+    if (doc.exists) {
+      const data = doc.data()!
+      return { username: data.username, passwordHash: data.passwordHash }
+    }
+  } catch {}
+  // Fallback: hash the default hardcoded password
+  return {
+    username: process.env.ADMIN_USERNAME || 'admin',
+    passwordHash: hashPassword(process.env.ADMIN_PASSWORD || 'ergoafya'),
+  }
+}
+
+// ── Save credentials to Firestore ─────────────────────────────────────────────
+async function saveCredentials(username: string, passwordHash: string) {
+  const { adminDb } = await import('@/lib/firebase-admin')
+  await adminDb.collection('_admin').doc('credentials').set({ username, passwordHash }, { merge: true })
+}
+
+// ── GET — always returns needsSetup: false ─────────────────────────────────────
 export async function GET() {
   return NextResponse.json({ needsSetup: false })
 }
 
-// POST — login with username + password
+// ── POST — login with username + password ─────────────────────────────────────
 export async function POST(req: NextRequest) {
   try {
     const { username, password } = await req.json()
-    const expectedUsername = 'admin'
-    const expectedPassword = 'ergoafya'
-
     if (!username || !password) {
       return NextResponse.json({ error: 'Username and password are required.' }, { status: 400 })
     }
-    if (username.toLowerCase().trim() !== expectedUsername || password !== expectedPassword) {
+
+    const creds = await getCredentials()
+    const inputHash = hashPassword(password)
+
+    if (
+      username.toLowerCase().trim() !== creds.username.toLowerCase() ||
+      inputHash !== creds.passwordHash
+    ) {
       return NextResponse.json({ error: 'Invalid username or password.' }, { status: 401 })
     }
 
     const sessionToken = makeSessionToken()
-    const sessionExpires = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString()
-    return NextResponse.json({ success: true, sessionToken, sessionExpires })
+    return NextResponse.json({ success: true, sessionToken })
   } catch {
     return NextResponse.json({ success: false, error: 'Authentication failed.' }, { status: 500 })
+  }
+}
+
+// ── PUT — change credentials (requires valid session — NO OTP needed) ──────────
+export async function PUT(req: NextRequest) {
+  const authHeader = req.headers.get('authorization')
+  if (!authHeader?.startsWith('Bearer ') || !verifySessionToken(authHeader.substring(7))) {
+    return NextResponse.json({ error: 'Unauthorized — please log in first.' }, { status: 401 })
+  }
+
+  try {
+    const { newUsername, newPassword, currentPassword } = await req.json()
+
+    if (!currentPassword) {
+      return NextResponse.json({ error: 'Current password is required to make changes.' }, { status: 400 })
+    }
+
+    // Verify current password before allowing change
+    const creds = await getCredentials()
+    if (hashPassword(currentPassword) !== creds.passwordHash) {
+      return NextResponse.json({ error: 'Current password is incorrect.' }, { status: 403 })
+    }
+
+    const updatedUsername = (newUsername?.trim() || creds.username).toLowerCase()
+    const updatedHash = newPassword ? hashPassword(newPassword) : creds.passwordHash
+
+    if (newPassword && newPassword.length < 8) {
+      return NextResponse.json({ error: 'New password must be at least 8 characters.' }, { status: 400 })
+    }
+
+    await saveCredentials(updatedUsername, updatedHash)
+    return NextResponse.json({ success: true, message: 'Credentials updated successfully.' })
+  } catch (e: any) {
+    return NextResponse.json({ error: e.message || 'Failed to update credentials.' }, { status: 500 })
   }
 }

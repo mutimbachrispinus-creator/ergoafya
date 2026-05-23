@@ -97,10 +97,11 @@ export default function BlogAdminPage() {
   const [setupPassword, setSetupPassword] = useState('')
   const [setupConfirm, setSetupConfirm] = useState('')
 
-  // Missing Change Creds states
+  // Change Creds states
   const [showChangeCreds, setShowChangeCreds] = useState(false)
   const [changeCredsLoading, setChangeCredsLoading] = useState(false)
   const [changeCredsMsg, setChangeCredsMsg] = useState('')
+  const [currentPassword, setCurrentPassword] = useState('')
   const [newUsername, setNewUsername] = useState('')
   const [newPassword, setNewPassword] = useState('')
 
@@ -185,20 +186,26 @@ export default function BlogAdminPage() {
 
   async function handleChangeCreds(e: React.FormEvent) {
     e.preventDefault()
+    if (!currentPassword) { setChangeCredsMsg('⚠️ Current password is required.'); return }
     setChangeCredsLoading(true)
     setChangeCredsMsg('')
     try {
       const res = await fetch('/api/blog/auth', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${sessionToken}` },
-        body: JSON.stringify({ newUsername: newUsername || undefined, newPassword: newPassword || undefined }),
+        body: JSON.stringify({
+          currentPassword,
+          newUsername: newUsername.trim() || undefined,
+          newPassword: newPassword || undefined,
+        }),
       })
       const data = await res.json()
       if (res.ok && data.success) {
         setChangeCredsMsg('✅ Credentials updated successfully!')
+        setCurrentPassword('')
         setNewUsername('')
         setNewPassword('')
-        setTimeout(() => { setShowChangeCreds(false); setChangeCredsMsg('') }, 2000)
+        setTimeout(() => { setShowChangeCreds(false); setChangeCredsMsg('') }, 2500)
       } else {
         setChangeCredsMsg(`⚠️ ${data.error || 'Update failed.'}`)
       }
@@ -365,16 +372,28 @@ export default function BlogAdminPage() {
     <main style={{ paddingTop: 108, background: 'var(--cream)', minHeight: '100vh' }}>
       {/* Change credentials modal */}
       {showChangeCreds && (
-        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}>
-          <div style={{ background: 'var(--white)', borderRadius: 20, padding: '2.5rem', width: '100%', maxWidth: 420, boxShadow: '0 25px 60px rgba(0,0,0,0.2)' }}>
-            <h2 className="serif" style={{ fontWeight: 700, color: 'var(--forest)', marginBottom: '1.5rem' }}>🔐 Change Credentials</h2>
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.55)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}>
+          <div style={{ background: 'var(--white)', borderRadius: 20, padding: '2.5rem', width: '100%', maxWidth: 440, boxShadow: '0 25px 60px rgba(0,0,0,0.2)' }}>
+            <h2 className="serif" style={{ fontWeight: 700, color: 'var(--forest)', marginBottom: '0.4rem' }}>🔐 Change Credentials</h2>
+            <p style={{ fontSize: '0.82rem', color: 'var(--muted)', marginBottom: '1.5rem' }}>No OTP required — just confirm your current password to proceed.</p>
             <form onSubmit={handleChangeCreds} style={{ display: 'grid', gap: '1rem' }}>
-              <div><label style={lStyle}>New Username (leave blank to keep)</label><input type="text" value={newUsername} onChange={e => setNewUsername(e.target.value)} style={iStyle} placeholder="New username" /></div>
-              <div><label style={lStyle}>New Password (leave blank to keep)</label><input type="password" value={newPassword} onChange={e => setNewPassword(e.target.value)} style={iStyle} placeholder="New password (min 8 chars)" /></div>
-              {changeCredsMsg && <p style={{ fontSize: '0.82rem', color: changeCredsMsg.startsWith('✅') ? 'var(--sage)' : '#d94624' }}>{changeCredsMsg}</p>}
+              <div>
+                <label style={lStyle}>Current Password <span style={{ color: '#d94624' }}>*</span></label>
+                <input type="password" value={currentPassword} onChange={e => setCurrentPassword(e.target.value)} style={iStyle} placeholder="Enter your current password" required />
+              </div>
+              <div style={{ height: 1, background: 'var(--border)' }} />
+              <div>
+                <label style={lStyle}>New Username (leave blank to keep current)</label>
+                <input type="text" value={newUsername} onChange={e => setNewUsername(e.target.value)} style={iStyle} placeholder="New username" autoComplete="off" />
+              </div>
+              <div>
+                <label style={lStyle}>New Password (leave blank to keep current)</label>
+                <input type="password" value={newPassword} onChange={e => setNewPassword(e.target.value)} style={iStyle} placeholder="Min 8 characters" autoComplete="new-password" />
+              </div>
+              {changeCredsMsg && <p style={{ fontSize: '0.82rem', color: changeCredsMsg.startsWith('✅') ? 'green' : '#d94624', fontWeight: 600 }}>{changeCredsMsg}</p>}
               <div style={{ display: 'flex', gap: '0.8rem' }}>
-                <button type="submit" disabled={changeCredsLoading} style={{ flex: 1, background: 'var(--forest)', color: 'white', border: 'none', borderRadius: 100, padding: '0.8rem', fontFamily: "'Outfit',sans-serif", fontWeight: 700, cursor: 'pointer' }}>{changeCredsLoading ? 'Saving…' : 'Save Changes'}</button>
-                <button type="button" onClick={() => setShowChangeCreds(false)} style={{ flex: 1, background: 'var(--cream)', color: 'var(--forest)', border: '1px solid var(--border)', borderRadius: 100, padding: '0.8rem', fontFamily: "'Outfit',sans-serif", fontWeight: 600, cursor: 'pointer' }}>Cancel</button>
+                <button type="submit" disabled={changeCredsLoading} style={{ flex: 1, background: 'var(--forest)', color: 'white', border: 'none', borderRadius: 100, padding: '0.8rem', fontFamily: "'Outfit',sans-serif", fontWeight: 700, cursor: 'pointer', opacity: changeCredsLoading ? 0.7 : 1 }}>{changeCredsLoading ? 'Saving…' : 'Save Changes'}</button>
+                <button type="button" onClick={() => { setShowChangeCreds(false); setChangeCredsMsg(''); setCurrentPassword('') }} style={{ flex: 1, background: 'var(--cream)', color: 'var(--forest)', border: '1px solid var(--border)', borderRadius: 100, padding: '0.8rem', fontFamily: "'Outfit',sans-serif", fontWeight: 600, cursor: 'pointer' }}>Cancel</button>
               </div>
             </form>
           </div>
