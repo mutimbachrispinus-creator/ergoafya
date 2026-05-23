@@ -1,21 +1,22 @@
 @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Outfit:wght@300;400;500;600;700&display=swap');
 
 :root {
-  --forest: #0f2318;
-  --leaf:   #1d5c38;
-  --mid:    #2d7a4f;
-  --sage:   #4aac78;
-  --mint:   #7ed4a6;
-  --cream:  #f6f2eb;
-  --warm:   #e8b84b;
-  --earth:  #b06328;
+  /* Vibrant & Professional Palette inspired by the reference, adapted for ErgoAfya */
+  --forest: #0b1528; /* Deep Navy/Charcoal for strong contrast */
+  --leaf:   #0055ff; /* Slightly darker electric blue for hover states */
+  --mid:    #0077ff; /* Mid electric blue */
+  --sage:   #0088ff; /* Bright Electric Blue for CTAs */
+  --mint:   #4db8ff; /* Soft cyan/blue for accents */
+  --cream:  #f8f9fa; /* Ultra-light gray for modern backgrounds */
+  --warm:   #ff9900; /* Warm accent */
+  --earth:  #f05033; /* Vibrant red/orange accent */
   --white:  #ffffff;
-  --card:   #f0f7f3;
-  --border: rgba(74,172,120,0.18);
-  --muted:  #4a6358;
-  --light:  #8aaa98;
-  --shadow: 0 16px 48px rgba(15,35,24,0.12);
-  --r:      20px;
+  --card:   rgba(255, 255, 255, 0.7); /* Semi-transparent for glassmorphism */
+  --border: rgba(0, 136, 255, 0.1); /* Subtle blue border */
+  --muted:  #4a5568; /* Slate Gray for secondary text */
+  --light:  #a0aec0;
+  --shadow: 0 10px 40px rgba(11, 21, 40, 0.08); /* Soft diffuse shadow */
+  --r:      16px; /* Slightly tighter rounded corners */
   --coral:  #e06c5c;
   --purple: #7c5cbf;
   --sky:    #4a9fd6;
@@ -72,12 +73,24 @@ body {
 .sec-h2 em { font-style: italic; color: var(--mid); }
 .sec-p { color: var(--muted); font-size: .975rem; line-height: 1.72; max-width: 520px; margin-top: .9rem; }
 
-/* card */
+/* glassmorphic card */
 .card {
-  background: var(--white); border: 1px solid var(--border);
-  border-radius: var(--r); padding: 2rem; transition: all .35s;
+  background: var(--card); border: 1px solid rgba(255,255,255,0.4);
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  border-radius: var(--r); padding: 2rem; transition: all .4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+  position: relative; overflow: hidden; z-index: 1;
 }
-.card:hover { transform: translateY(-5px); box-shadow: var(--shadow); border-color: var(--sage); }
+.card::before {
+  content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+  background: linear-gradient(135deg, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 100%);
+  z-index: -1; pointer-events: none;
+}
+.card:hover { 
+  transform: translateY(-8px); 
+  box-shadow: 0 15px 35px rgba(0, 136, 255, 0.15), 0 5px 15px rgba(0,0,0,0.05); 
+  border-color: rgba(0, 136, 255, 0.3); 
+}
 
 /* reveal animation */
 .reveal { opacity: 0; transform: translateY(24px); transition: opacity .75s ease, transform .75s ease; }
@@ -289,4 +302,41 @@ body {
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
+
+/* Organic Background Blobs */
+.blob-bg {
+  position: absolute; border-radius: 50%; filter: blur(60px);
+  z-index: 0; opacity: 0.4; pointer-events: none;
+}
+.blob-1 { background: var(--sage); width: 400px; height: 400px; top: -10%; left: -10%; animation: floatBlob 10s ease-in-out infinite alternate; }
+.blob-2 { background: var(--mint); width: 300px; height: 300px; bottom: -5%; right: -5%; animation: floatBlob 12s ease-in-out infinite alternate-reverse; }
+
+@keyframes floatBlob {
+  0% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(30px, -40px) scale(1.1); }
+  100% { transform: translate(-20px, 20px) scale(0.9); }
+}
+
+/* Staggered Masonry Layout for Lists/Services */
+.staggered-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; align-items: start;
+}
+.staggered-grid > *:nth-child(even) { transform: translateY(2rem); }
+@media (max-width: 1024px) {
+  .staggered-grid { grid-template-columns: repeat(2, 1fr); }
+  .staggered-grid > *:nth-child(even) { transform: translateY(0); }
+  .staggered-grid > *:nth-child(2n) { transform: translateY(2rem); }
+}
+@media (max-width: 600px) {
+  .staggered-grid { grid-template-columns: 1fr; }
+  .staggered-grid > * { transform: translateY(0) !important; }
+}
+
+/* Topbar utility */
+.topbar {
+  background: var(--forest); color: white; font-size: 0.75rem; padding: 0.4rem 5vw;
+  display: flex; justify-content: space-between; align-items: center; z-index: 201; position: relative;
+}
+.topbar a { color: rgba(255,255,255,0.8); text-decoration: none; transition: color 0.2s; }
+.topbar a:hover { color: var(--sage); }
 
