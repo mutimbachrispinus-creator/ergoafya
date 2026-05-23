@@ -188,46 +188,72 @@ export default function HomePage() {
         </a>
       </nav>
 
-      {/* ── Mobile Bottom Tab Bar ──────────────────────────────────────────── */}
-      <nav className="page-bottomnav hide-desktop" aria-label="Page navigation">
-        {PAGES.map((p, i) => {
-          const isActive = i === activePage
-          return (
-            <button
-              key={p.id}
-              onClick={() => goTo(i)}
-              style={{
-                display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.2rem',
-                padding: '0.5rem 0.25rem', border: 'none', cursor: 'pointer', borderRadius: 10,
-                background: 'transparent', flex: 1,
-                color: isActive ? 'var(--sage)' : 'var(--muted)',
-                transition: 'color 0.2s',
-              }}
-            >
-              <span style={{ fontSize: '1.25rem', lineHeight: 1 }}>{p.icon}</span>
-              <span style={{ fontSize: '0.55rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-                {p.label}
-              </span>
-              {isActive && (
-                <div style={{ width: 18, height: 2, background: 'var(--sage)', borderRadius: 2, marginTop: 2 }} />
-              )}
-            </button>
-          )
-        })}
-        <a
-          href="/blog/admin"
+      {/* ── Mobile Hamburger Menu ──────────────────────────────────────────── */}
+      <div className="hide-desktop">
+        <button
+          onClick={() => setNavOpen(true)}
           style={{
-            display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.2rem',
-            padding: '0.5rem 0.25rem', borderRadius: 10,
-            background: 'rgba(11,21,40,0.05)', border: '1px solid rgba(11,21,40,0.1)',
-            flex: '0 0 auto', minWidth: 52,
-            color: 'var(--forest)', textDecoration: 'none', transition: 'all 0.2s',
+            position: 'fixed', bottom: 24, right: 24, zIndex: 300,
+            width: 60, height: 60, borderRadius: '50%', background: 'var(--sage)',
+            color: 'white', border: 'none', boxShadow: '0 8px 24px rgba(74,172,120,0.4)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer'
           }}
         >
-          <span style={{ fontSize: '1.15rem', lineHeight: 1 }}>🛡️</span>
-          <span style={{ fontSize: '0.5rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em', color: 'var(--muted)' }}>Admin</span>
-        </a>
-      </nav>
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+            <line x1="4" y1="12" x2="20" y2="12" />
+            <line x1="4" y1="6" x2="20" y2="6" />
+            <line x1="4" y1="18" x2="20" y2="18" />
+          </svg>
+        </button>
+
+        {navOpen && (
+          <div style={{
+            position: 'fixed', inset: 0, background: 'rgba(255,255,255,0.98)', backdropFilter: 'blur(16px)',
+            zIndex: 400, display: 'flex', flexDirection: 'column', padding: '1.5rem 2rem'
+          }}>
+            <button
+              onClick={() => setNavOpen(false)}
+              style={{
+                alignSelf: 'flex-end', background: 'rgba(0,0,0,0.05)', border: 'none',
+                width: 40, height: 40, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                color: 'var(--forest)', cursor: 'pointer'
+              }}
+            >
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                <line x1="18" y1="6" x2="6" y2="18" />
+                <line x1="6" y1="6" x2="18" y2="18" />
+              </svg>
+            </button>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem', marginTop: '2rem' }}>
+              {PAGES.map((p, i) => (
+                <button
+                  key={p.id}
+                  onClick={() => goTo(i)}
+                  style={{
+                    background: 'transparent', border: 'none', fontSize: '1.4rem', fontWeight: 700,
+                    color: i === activePage ? 'var(--sage)' : 'var(--forest)',
+                    textAlign: 'left', display: 'flex', alignItems: 'center', gap: '1rem',
+                    padding: '0.5rem 0'
+                  }}
+                >
+                  <span style={{ fontSize: '1.8rem', opacity: i === activePage ? 1 : 0.7 }}>{p.icon}</span> {p.label}
+                </button>
+              ))}
+              <div style={{ height: 1, background: 'var(--border)', margin: '1rem 0' }} />
+              <a
+                href="/blog/admin"
+                style={{
+                  textDecoration: 'none', fontSize: '1.4rem', fontWeight: 700,
+                  color: 'var(--forest)', display: 'flex', alignItems: 'center', gap: '1rem',
+                  padding: '0.5rem 0'
+                }}
+              >
+                <span style={{ fontSize: '1.8rem', opacity: 0.7 }}>🛡️</span> Admin Portal
+              </a>
+            </div>
+          </div>
+        )}
+      </div>
 
       {/* ── Page Content Area ──────────────────────────────────────────────── */}
       <div
@@ -381,12 +407,12 @@ export default function HomePage() {
           .page-content-area {
             left: 0 !important;
             top: 72px !important;
-            bottom: 64px !important;
+            bottom: 0 !important;
             transition: none !important;
           }
           .page-breadcrumb { display: none !important; }
           .page-arrows     { display: none !important; }
-          .page-panel      { padding-bottom: 1rem; }
+          .page-panel      { padding-bottom: 6rem; }
         }
 
         /* ── Scrollbar ────────────────────────────────────────── */

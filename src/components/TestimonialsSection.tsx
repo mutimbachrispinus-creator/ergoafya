@@ -2,9 +2,9 @@
 import { useState } from 'react'
 
 const TESTIMONIALS = [
-  { author: "Grace K.", role: "HR Manager", rating: 5, text: "ErgoAfya revolutionized our office space. Following their ergonomic assessments, our staff reported a 40% reduction in back pain, and overall productivity has skyrocketed. Highly recommended for any corporate team!" },
-  { author: "Allan M.", role: "Software Engineer", rating: 5, text: "Working from home took a toll on my posture until I consulted ErgoAfya. Their tele-ergonomic assessment was incredibly thorough. The personalized adjustments completely eliminated my chronic neck pain." },
-  { author: "Paul W.", role: "Parent", rating: 5, text: "The paediatric OT services have been life-changing for our son. The therapist was so patient and creative. We've seen massive improvements in his fine motor skills over just a few months." }
+  { author: "Grace K.", role: "HR Manager, Nairobi Tech Firm", rating: 5, text: "ErgoAfya completely revolutionized our Upperhill office space. Following their clinical ergonomic assessments, our developers reported a 40% reduction in lower back pain. Absenteeism has dropped, and overall productivity has skyrocketed. Highly recommended for any Kenyan corporate team!" },
+  { author: "Allan M.", role: "Remote Software Engineer", rating: 5, text: "Working from home in Ruaka took a massive toll on my posture until I consulted ErgoAfya. Their tele-ergonomic assessment was incredibly thorough and tailored to my exact setup. The personalized adjustments completely eliminated my chronic neck pain." },
+  { author: "Dr. Paul W.", role: "Hospital Administrator", rating: 5, text: "The manual handling and back care training provided by ErgoAfya was life-changing for our nursing staff. The occupational therapist understood the unique physical demands of a busy Kenyan hospital ward. We've seen a massive reduction in staff strain injuries." }
 ]
 
 export default function TestimonialsSection() {

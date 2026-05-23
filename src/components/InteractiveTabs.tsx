@@ -2,10 +2,10 @@
 import { useState } from 'react'
 
 const TABS = [
-  { id: 'clinical', label: 'Clinical Occupational Therapy', title: 'Clinical Occupational Therapy Interventions', content: 'Our clinical OT services focus on rehabilitating fine motor skills, sensory processing, and daily living functions. We use evidence-based approaches to design tailored therapy plans that restore independence and quality of life.' },
-  { id: 'workplace', label: 'Workplace Ergonomics', title: 'Workplace Ergonomic Optimization', content: 'We assess workplace environments to minimize injury risks. By optimizing workstation setups and training staff on manual handling, we drastically reduce musculoskeletal disorders and absenteeism.' },
-  { id: 'paediatric', label: 'Paediatric OT', title: 'Paediatric Occupational Therapy', content: 'Inspired by our specialized knowledge in child development, we assist children with developmental delays, sensory challenges, and learning difficulties to achieve their full potential in school and life.' },
-  { id: 'teletherapy', label: 'Teletherapy Services', title: 'Virtual Teletherapy Support', content: 'Access high-quality occupational therapy from the comfort of your home. Our teletherapy sessions are highly interactive, ensuring you receive continuous care and guidance regardless of your location.' }
+  { id: 'clinical', label: 'Clinical Occupational Therapy', title: 'Clinical Occupational Therapy Interventions', content: 'Our clinical OT services focus on rehabilitating fine motor skills, sensory processing, and daily living functions. We use evidence-based approaches to design tailored therapy plans that restore independence and quality of life for Kenyans recovering from injuries or neurological conditions.' },
+  { id: 'workplace', label: 'Workplace Ergonomics', title: 'Workplace Ergonomic Optimization', content: 'We assess workplace environments across Kenya to minimize injury risks. By optimizing workstation setups and training staff on manual handling, we drastically reduce musculoskeletal disorders and costly medical absenteeism in the corporate and industrial sectors.' },
+  { id: 'paediatric', label: 'Paediatric OT', title: 'Paediatric Occupational Therapy', content: 'Inspired by our specialized knowledge in child development, we assist Kenyan children with developmental delays, sensory challenges, and learning difficulties. We empower them to achieve their full potential in school and confidently navigate daily life.' },
+  { id: 'teletherapy', label: 'Teletherapy Services', title: 'Virtual Teletherapy Support', content: 'Access high-quality occupational therapy from anywhere in Kenya or East Africa. Our virtual teletherapy sessions are highly interactive and secure, ensuring you receive continuous, expert care and guidance without the need to travel through Nairobi traffic.' }
 ]
 
 export default function InteractiveTabs() {

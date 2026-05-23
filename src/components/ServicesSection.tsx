@@ -1,18 +1,18 @@
 const SERVICES = [
   { n:'01', icon:'📋', title:'Workplace Ergonomic Assessments',
-    desc:'Comprehensive on-site evaluation of work environments, tasks, tools, and postures to identify ergonomic risk factors before they become costly injuries.' },
+    desc:'Comprehensive on-site evaluation of Nairobi offices, factory floors, and clinical environments to identify ergonomic risk factors before they become costly occupational injuries.' },
   { n:'02', icon:'🖥️', title:'Workstation Design & Optimization',
-    desc:'Tailored workstation configurations that reduce physical strain, improve comfort, and enhance daily productivity for every type of employee.' },
+    desc:'Tailored workstation configurations that reduce physical strain and enhance daily productivity for Kenyan professionals, whether working from home or in a corporate HQ.' },
   { n:'03', icon:'🏋️', title:'Manual Handling & Back Care Training',
-    desc:'Practical hands-on training in safe lifting, carrying, and manual handling techniques that protect spines and reduce occupational injury rates.' },
-  { n:'04', icon:'🧘', title:'Posture & Musculoskeletal Health Programs',
-    desc:'Evidence-based programs addressing posture correction, movement patterns, and musculoskeletal wellbeing — reducing absenteeism across your workforce.' },
+    desc:'Practical, hands-on training in safe lifting and manual handling techniques. Crucial for protecting spines in Kenya’s booming logistics, manufacturing, and healthcare sectors.' },
+  { n:'04', icon:'🧘', title:'Posture & Musculoskeletal Health',
+    desc:'Evidence-based programs addressing posture correction and movement patterns — actively reducing absenteeism and medical cover claims across your workforce.' },
   { n:'05', icon:'🛡️', title:'Workplace Injury Prevention Strategies',
-    desc:'Proactive, organisation-wide strategies that systematically reduce the risk of work-related injuries through risk mapping and staff education.' },
-  { n:'06', icon:'📈', title:'Return-to-Work & Rehabilitation Support',
-    desc:'Structured, clinically-guided support for employees recovering from occupational injuries, enabling safe and sustainable return to full function.' },
+    desc:'Proactive, organisation-wide strategies that systematically reduce the risk of work-related injuries through local risk mapping and culturally relevant staff education.' },
+  { n:'06', icon:'📈', title:'Return-to-Work & Rehab Support',
+    desc:'Structured, clinically-guided occupational therapy support for employees recovering from injuries, enabling a safe and sustainable return to full function.' },
   { n:'07', icon:'🦾', title:'Assistive Device Recommendations',
-    desc:'Expert guidance on adaptive equipment and assistive devices supporting injured or at-risk workers in performing their roles safely.' },
+    desc:'Expert guidance on sourcing and utilizing adaptive equipment locally available in Kenya, supporting injured or at-risk workers to perform their roles safely.' },
 ]
 
 const ADVANTAGES = [
@@ -38,8 +38,8 @@ export default function ServicesSection() {
             <p className="sec-eyebrow">Our Services</p>
             <h2 className="sec-h2" style={{ marginBottom: 0 }}>Comprehensive Ergonomic &amp;<br/><em className="gradient-text">Occupational Health</em> Solutions</h2>
           </div>
-          <div style={{ maxWidth: 450, paddingBottom: '0.5rem' }}>
-            <p className="sec-p" style={{ marginBottom: 0 }}>From initial assessment to rehabilitation — we cover every stage of workplace health to keep your people safe, comfortable, and performing at their best.</p>
+          <div style={{ maxWidth: 500, paddingBottom: '0.5rem' }}>
+            <p className="sec-p" style={{ marginBottom: 0 }}>From initial workstation assessments in Nairobi to nationwide corporate rehabilitation programs — we cover every stage of workplace health to keep the Kenyan workforce safe, comfortable, and highly productive.</p>
           </div>
         </div>
 
