@@ -491,6 +491,7 @@ export default function BlogAdminPage() {
                     onChange={e => setForm(f => ({ ...f, title: e.target.value }))}
                     style={iStyle}
                     placeholder="e.g. Back Pain Prevention Checklist for Corporate Offices"
+                    minLength={5}
                     required
                   />
                 </div>
@@ -514,6 +515,7 @@ export default function BlogAdminPage() {
                   rows={2}
                   style={{ ...iStyle, resize: 'vertical' }}
                   placeholder="Summarize the article in 2 sentences to catch readers' attention..."
+                  minLength={10}
                   required
                 />
                 <span style={{ fontSize: '0.7rem', color: 'var(--light)', display: 'block', textAlign: 'right', marginTop: 4 }}>

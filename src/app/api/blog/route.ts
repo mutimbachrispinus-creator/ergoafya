@@ -46,7 +46,11 @@ export async function POST(req: NextRequest) {
   }
   const body   = await req.json()
   const parsed = PostSchema.safeParse(body)
-  if (!parsed.success) return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 })
+  if (!parsed.success) {
+    const errors = parsed.error.flatten().fieldErrors;
+    const errorMsg = Object.entries(errors).map(([k, v]) => `${k}: ${v?.join(', ')}`).join(' | ');
+    return NextResponse.json({ error: `Validation error: ${errorMsg}` }, { status: 400 })
+  }
   try {
     const { adminDb } = await import('@/lib/firebase-admin')
     const doc = await adminDb.collection('posts').add({
