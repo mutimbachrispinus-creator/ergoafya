@@ -80,7 +80,7 @@ export default function BookingSection() {
             {[
               { icon:'📞', label:'Phone',     value:'+254 712 251 520',     href:'tel:+254712251520' },
               { icon:'💬', label:'WhatsApp',  value:'0734 251 520',         href:'https://wa.me/254734251520' },
-              { icon:'✉️', label:'Email',     value:'ergoafya@mail.com',    href:'mailto:ergoafya@mail.com' },
+              { icon:'✉️', label:'Email',     value:'ergoafya@gmail.com',    href:'mailto:ergoafya@gmail.com' },
               { icon:'📍', label:'Location',  value:'Upperhill Gardens, Along 3rd Ngong Avenue, Nairobi', href:'#' },
             ].map(c=>(
               <a key={c.label} href={c.href} style={{

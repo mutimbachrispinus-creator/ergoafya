@@ -54,7 +54,7 @@ export async function emailOwnerBooking(booking: {
           </div>
         </div>
         <div style="background:#0f2318;padding:12px 24px;text-align:center">
-          <p style="color:#4aac78;margin:0;font-size:12px">ErgoAfya Solutions · Upperhill, Nairobi · ergoafya@mail.com</p>
+          <p style="color:#4aac78;margin:0;font-size:12px">ErgoAfya Solutions · Upperhill, Nairobi · ergoafya@gmail.com</p>
         </div>
       </div>
     `,
@@ -89,7 +89,7 @@ export async function emailClientConfirmation(booking: {
           <p style="color:#4a6358;font-size:14px">Need to reach us sooner?<br>
             📞 <a href="tel:+254712251520" style="color:#1d5c38">+254 712 251 520</a><br>
             💬 <a href="https://wa.me/254734251520" style="color:#1d5c38">WhatsApp: 0734 251 520</a><br>
-            ✉️ <a href="mailto:ergoafya@mail.com" style="color:#1d5c38">ergoafya@mail.com</a>
+            ✉️ <a href="mailto:ergoafya@gmail.com" style="color:#1d5c38">ergoafya@gmail.com</a>
           </p>
         </div>
         <div style="background:#0f2318;padding:12px 24px;text-align:center;border-radius:0 0 12px 12px">

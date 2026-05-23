@@ -1,9 +1,9 @@
 import type { Metadata } from 'next'
 import './globals.css'
-import Nav     from '@/components/ui/Nav'
-import Footer  from '@/components/ui/Footer'
-import WaFloat from '@/components/ui/WaFloat'
-import Topbar  from '@/components/ui/Topbar'
+import Nav                from '@/components/ui/Nav'
+import ConditionalFooter  from '@/components/ui/ConditionalFooter'
+import WaFloat            from '@/components/ui/WaFloat'
+import Topbar             from '@/components/ui/Topbar'
 
 export const metadata: Metadata = {
   title: 'ErgoAfya Solutions | Ergonomics & Occupational Health Kenya',
@@ -30,7 +30,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Topbar />
         <Nav />
         {children}
-        <Footer />
+        <ConditionalFooter />
         <WaFloat />
       </body>
     </html>

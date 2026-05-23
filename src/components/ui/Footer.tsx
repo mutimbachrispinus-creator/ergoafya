@@ -66,7 +66,7 @@ export default function Footer() {
             {[
               {icon:'📞', text:'+254 712 251 520',    href:'tel:+254712251520'},
               {icon:'💬', text:'WhatsApp: 0734 251 520', href:'https://wa.me/254734251520'},
-              {icon:'✉️', text:'ergoafya@mail.com',   href:'mailto:ergoafya@mail.com'},
+              {icon:'✉️', text:'ergoafya@gmail.com',   href:'mailto:ergoafya@gmail.com'},
               {icon:'📍', text:'Upperhill Gardens, 3rd Ngong Ave, Nairobi', href:'/#booking'},
             ].map(item=>(
               <li key={item.href}>
