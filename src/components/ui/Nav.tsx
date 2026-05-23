@@ -30,8 +30,9 @@ export default function Nav() {
       boxShadow: scrolled ? '0 4px 24px rgba(15,35,24,.07)' : 'none',
       transition:'all .4s',
     }}>
-      <Link href="/" style={{textDecoration:'none', display: 'flex', alignItems: 'center'}}>
+      <Link href="/" style={{textDecoration:'none', display: 'flex', alignItems: 'center', gap: '0.6rem'}}>
         <ErgoAfyaLogo size={42} variant="horizontal" />
+        <span className="serif" style={{ fontSize: '1.6rem', fontWeight: 700, color: 'var(--forest)', marginTop: '4px' }}>ErgoAfya</span>
       </Link>
 
       {/* Desktop links */}
