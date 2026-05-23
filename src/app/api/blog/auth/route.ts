@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
 import crypto from 'crypto'
+import { envAny } from '@/lib/env'
 
 // ── Session token helpers ──────────────────────────────────────────────────────
 function sign(token: string): string {
-  const secret = process.env.SESSION_SECRET || 'ergoafya_session_secret'
+  const secret = envAny('SESSION_SECRET') || 'ergoafya_session_secret'
   return crypto.createHmac('sha256', secret).update(token).digest('hex')
 }
 
@@ -49,8 +50,8 @@ async function getCredentials(): Promise<{ username: string; passwordHash: strin
   }
   // Fallback: hash the default hardcoded password
   return {
-    username: process.env.ADMIN_USERNAME || 'admin',
-    passwordHash: hashPassword(process.env.ADMIN_PASSWORD || 'ergoafya'),
+    username: envAny('ADMIN_USERNAME') || 'admin',
+    passwordHash: hashPassword(envAny('ADMIN_PASSWORD') || 'ergoafya'),
   }
 }
 

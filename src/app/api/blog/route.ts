@@ -1,9 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 import { verifySessionToken } from '@/app/api/blog/auth/route'
-import { getDb } from '@/lib/firebase'
-// @ts-ignore
-import { collection, addDoc, getDocs, query, orderBy, limit as fsLimit, where, deleteDoc, doc as fsDoc } from 'firebase/firestore/lite'
+import { createBlogPost, deleteBlogPost, listBlogPosts } from '@/lib/firestore-rest'
 
 const PostSchema = z.object({
   title:     z.string().min(5),
@@ -20,75 +18,75 @@ function isAuthorized(req: NextRequest): boolean {
   return verifySessionToken(authHeader.substring(7))
 }
 
+function apiError(message: string, status = 500) {
+  return NextResponse.json({ error: message }, { status })
+}
+
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url)
   const limitCount = parseInt(searchParams.get('limit') || '20')
   const adminAccess = isAuthorized(req)
 
   try {
-    const db = getDb()
-    const postsRef = collection(db, 'posts')
-    let q = query(postsRef, orderBy('createdAt', 'desc'), fsLimit(limitCount))
-    
-    if (!adminAccess) {
-      q = query(postsRef, where('published', '==', true), orderBy('createdAt', 'desc'), fsLimit(limitCount))
-    }
-    
-    const snap = await getDocs(q)
-    const posts = snap.docs.map((doc: any) => ({ id: doc.id, ...doc.data() }))
+    const posts = await listBlogPosts({ adminAccess, limit: limitCount })
     
     const headers: Record<string, string> = adminAccess
       ? { 'Cache-Control': 'no-store, max-age=0' }
       : { 'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600' }
     return NextResponse.json({ posts }, { headers })
   } catch (e: any) {
-    console.error('Error fetching posts:', e.message)
-    return NextResponse.json({ posts: [], error: 'Could not load posts' }, { status: 500 })
+    const msg = e?.message || String(e)
+    console.error('[GET /api/blog] Firestore error:', msg)
+    return NextResponse.json({ posts: [], error: `Could not load posts: ${msg}` }, { status: 500 })
   }
 }
 
 export async function POST(req: NextRequest) {
   if (!isAuthorized(req)) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    return apiError('Unauthorized', 401)
   }
-  const body   = await req.json()
+
+  let body: unknown
+  try {
+    body = await req.json()
+  } catch {
+    return apiError('Invalid JSON request body.', 400)
+  }
+
   const parsed = PostSchema.safeParse(body)
   if (!parsed.success) {
     const errors = parsed.error.flatten().fieldErrors;
     const errorMsg = Object.entries(errors).map(([k, v]) => `${k}: ${v?.join(', ')}`).join(' | ');
-    return NextResponse.json({ error: `Validation error: ${errorMsg}` }, { status: 400 })
+    return apiError(`Validation error: ${errorMsg}`, 400)
   }
   try {
-    const db = getDb()
-    const postsRef = collection(db, 'posts')
-    const docRef = await addDoc(postsRef, {
+    const id = await createBlogPost({
       ...parsed.data,
       createdAt: new Date().toISOString(),
       slug: parsed.data.title.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,''),
     })
-    return NextResponse.json({ success: true, id: docRef.id })
+    return NextResponse.json({ success: true, id })
   } catch (e: any) {
     const msg = e?.message || String(e)
     console.error('[POST /api/blog] Firestore error:', msg)
-    return NextResponse.json({ error: `Failed to create post: ${msg}` }, { status: 500 })
+    return apiError(`Failed to create post: ${msg}`, 500)
   }
 }
 
 export async function DELETE(req: NextRequest) {
   if (!isAuthorized(req)) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    return apiError('Unauthorized', 401)
   }
   try {
     const { searchParams } = new URL(req.url)
     const id = searchParams.get('id')
-    if (!id) return NextResponse.json({ error: 'Missing post ID' }, { status: 400 })
+    if (!id) return apiError('Missing post ID', 400)
     
-    const db = getDb()
-    await deleteDoc(fsDoc(db, 'posts', id))
+    await deleteBlogPost(id)
     return NextResponse.json({ success: true })
   } catch (e: any) {
     const msg = e?.message || String(e)
     console.error('[DELETE /api/blog] Firestore error:', msg)
-    return NextResponse.json({ error: `Failed to delete post: ${msg}` }, { status: 500 })
+    return apiError(`Failed to delete post: ${msg}`, 500)
   }
 }

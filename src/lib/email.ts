@@ -1,12 +1,17 @@
 // Nodemailer — sends formatted HTML email to owner on every booking
 // Also sends confirmation email to client
 import nodemailer from 'nodemailer'
+import { envAny } from './env'
+
+const emailFrom = envAny('EMAIL_FROM')
+const emailPassword = envAny('EMAIL_PASSWORD')
+const ownerEmail = envAny('OWNER_EMAIL')
 
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
-    user: process.env.EMAIL_FROM!,
-    pass: process.env.EMAIL_PASSWORD!, // Gmail App Password (not your login password)
+    user: emailFrom,
+    pass: emailPassword, // Gmail App Password (not your login password)
   },
 })
 // For SendGrid instead, replace above with:
@@ -20,8 +25,8 @@ export async function emailOwnerBooking(booking: {
   service: string; datetime?: string; notes?: string; submittedAt: string
 }) {
   return transporter.sendMail({
-    from:    `"ErgoAfya Site" <${process.env.EMAIL_FROM}>`,
-    to:      process.env.OWNER_EMAIL!,
+    from:    `"ErgoAfya Site" <${emailFrom}>`,
+    to:      ownerEmail,
     subject: `🟢 New Booking: ${booking.name} — ${booking.service}`,
     html: `
       <div style="font-family:sans-serif;max-width:560px;margin:0 auto;border:1px solid #c8e6d8;border-radius:12px;overflow:hidden">
@@ -65,7 +70,7 @@ export async function emailClientConfirmation(booking: {
   name: string; email: string; service: string
 }) {
   return transporter.sendMail({
-    from:    `"ErgoAfya Solutions" <${process.env.EMAIL_FROM}>`,
+    from:    `"ErgoAfya Solutions" <${emailFrom}>`,
     to:      booking.email,
     subject: `✅ Booking Confirmed — ErgoAfya Solutions`,
     html: `

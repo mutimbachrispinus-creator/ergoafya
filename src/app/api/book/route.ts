@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
+import { env, envAny } from '@/lib/env'
 
 const Schema = z.object({
   firstName:    z.string().min(2),
@@ -35,7 +36,7 @@ export async function POST(req: NextRequest) {
     }
 
     // ── 1. Save to Firestore (server-side)
-    if (process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || process.env.FIREBASE_ADMIN_PROJECT_ID) {
+    if (env('NEXT_PUBLIC_FIREBASE_PROJECT_ID', 'next_public_firebase_project_id', 'projectId', 'project_id', 'FIREBASE_ADMIN_PROJECT_ID', 'firebase_admin_project_id')) {
       try {
         const { getDb } = await import('@/lib/firebase')
         const db = getDb()
@@ -46,7 +47,7 @@ export async function POST(req: NextRequest) {
     }
 
     // ── 2. Africa's Talking SMS to owner + client
-    if (process.env.AT_API_KEY) {
+    if (envAny('AT_API_KEY')) {
       try {
         const { notifyOwnerSMS, confirmClientSMS } = await import('@/lib/africastalking')
         await Promise.allSettled([
@@ -57,7 +58,7 @@ export async function POST(req: NextRequest) {
     }
 
     // ── 3. Email notifications
-    if (process.env.EMAIL_FROM) {
+    if (envAny('EMAIL_FROM')) {
       try {
         const { emailOwnerBooking, emailClientConfirmation } = await import('@/lib/email')
         await Promise.allSettled([
@@ -68,10 +69,10 @@ export async function POST(req: NextRequest) {
     }
 
     // ── 4. CallMeBot WhatsApp (free, no SDK needed)
-    if (process.env.CALLMEBOT_API_KEY) {
+    if (envAny('CALLMEBOT_API_KEY')) {
       const msg = encodeURIComponent(`[ErgoAfya] New booking: ${booking.name} — ${d.service} — ${d.phone}`)
-      const num = process.env.AT_OWNER_PHONE?.replace(/\D/g,'')
-      fetch(`https://api.callmebot.com/whatsapp.php?phone=${num}&text=${msg}&apikey=${process.env.CALLMEBOT_API_KEY}`)
+      const num = envAny('AT_OWNER_PHONE').replace(/\D/g,'')
+      fetch(`https://api.callmebot.com/whatsapp.php?phone=${num}&text=${msg}&apikey=${envAny('CALLMEBOT_API_KEY')}`)
         .catch(()=>null)
     }
 

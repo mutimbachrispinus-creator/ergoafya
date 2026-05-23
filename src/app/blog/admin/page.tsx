@@ -64,6 +64,18 @@ function parseMarkdown(md: string) {
   return html
 }
 
+async function readApiJson(res: Response) {
+  const contentType = res.headers.get('content-type') || ''
+  if (contentType.includes('application/json')) {
+    return res.json()
+  }
+
+  const text = await res.text()
+  const plainText = text.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim()
+  const detail = plainText ? ` ${plainText.slice(0, 180)}` : ''
+  throw new Error(`Server returned ${res.status} ${res.statusText || 'response'} instead of JSON.${detail}`)
+}
+
 export default function BlogAdminPage() {
   // 'checking' | 'login' | 'setup' | 'authed'
   const [authState, setAuthState] = useState<'checking' | 'login' | 'setup' | 'authed'>('checking')
@@ -119,7 +131,7 @@ export default function BlogAdminPage() {
     try {
       const res = await fetch('/api/blog', { headers: { 'Authorization': `Bearer ${token}` } })
       if (res.ok) {
-        const data = await res.json()
+        const data = await readApiJson(res)
         setSessionToken(token)
         setAuthState('authed')
         setPosts(data.posts || [])
@@ -140,7 +152,7 @@ export default function BlogAdminPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password }),
       })
-      const data = await res.json()
+      const data = await readApiJson(res)
       if (res.ok && data.success) {
         localStorage.setItem('ergoafya_admin_token', data.sessionToken)
         setSessionToken(data.sessionToken)
@@ -168,7 +180,7 @@ export default function BlogAdminPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ bootstrapSecret, username: setupUsername, password: setupPassword }),
       })
-      const data = await res.json()
+      const data = await readApiJson(res)
       if (res.ok && data.success) {
         localStorage.setItem('ergoafya_admin_token', data.sessionToken)
         setSessionToken(data.sessionToken)
@@ -199,7 +211,7 @@ export default function BlogAdminPage() {
           newPassword: newPassword || undefined,
         }),
       })
-      const data = await res.json()
+      const data = await readApiJson(res)
       if (res.ok && data.success) {
         setChangeCredsMsg('✅ Credentials updated successfully!')
         setCurrentPassword('')
@@ -220,7 +232,7 @@ export default function BlogAdminPage() {
     setPostsLoading(true)
     try {
       const res = await fetch('/api/blog', { headers: { 'Authorization': `Bearer ${token}` } })
-      const data = await res.json()
+      const data = await readApiJson(res)
       if (res.ok) setPosts(data.posts || [])
     } catch (e) { console.error('Failed to load posts', e) }
     finally { setPostsLoading(false) }
@@ -244,7 +256,7 @@ export default function BlogAdminPage() {
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${sessionToken}` },
         body: JSON.stringify(form),
       })
-      const json = await res.json()
+      const json = await readApiJson(res)
       if (!res.ok) throw new Error(json.error || 'Save failed')
       setStatus('ok')
       fetchPosts(sessionToken)

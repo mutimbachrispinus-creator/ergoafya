@@ -1,15 +1,16 @@
 import { getApps, initializeApp, cert } from 'firebase-admin/app'
 import { getFirestore } from 'firebase-admin/firestore'
+import { env } from './env'
 
 function getAdminApp() {
   if (getApps().length > 0) return getApps()[0]
-  const privateKey = process.env.FIREBASE_ADMIN_PRIVATE_KEY || process.env.private_key
+  const privateKey = env('FIREBASE_ADMIN_PRIVATE_KEY', 'firebase_admin_private_key', 'private_key')
   if (!privateKey) {
     console.error('FIREBASE_ADMIN_PRIVATE_KEY is not set')
   }
 
-  const projectId = process.env.FIREBASE_ADMIN_PROJECT_ID || process.env.project_id || process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || 'paav-d67cb'
-  const clientEmail = process.env.FIREBASE_ADMIN_CLIENT_EMAIL || process.env.client_email || `firebase-adminsdk@${projectId}.iam.gserviceaccount.com`
+  const projectId = env('FIREBASE_ADMIN_PROJECT_ID', 'firebase_admin_project_id', 'project_id', 'projectId', 'NEXT_PUBLIC_FIREBASE_PROJECT_ID', 'next_public_firebase_project_id') || 'paav-d67cb'
+  const clientEmail = env('FIREBASE_ADMIN_CLIENT_EMAIL', 'firebase_admin_client_email', 'client_email') || `firebase-adminsdk@${projectId}.iam.gserviceaccount.com`
 
   return initializeApp({
     credential: cert({
