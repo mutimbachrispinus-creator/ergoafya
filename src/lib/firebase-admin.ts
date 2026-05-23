@@ -3,15 +3,15 @@ import { getFirestore } from 'firebase-admin/firestore'
 
 function getAdminApp() {
   if (getApps().length > 0) return getApps()[0]
-  const privateKey = process.env.FIREBASE_ADMIN_PRIVATE_KEY
+  const privateKey = process.env.FIREBASE_ADMIN_PRIVATE_KEY || process.env.private_key
   if (!privateKey) {
     console.error('FIREBASE_ADMIN_PRIVATE_KEY is not set')
   }
 
   return initializeApp({
     credential: cert({
-      projectId:   process.env.FIREBASE_ADMIN_PROJECT_ID || '',
-      clientEmail: process.env.FIREBASE_ADMIN_CLIENT_EMAIL || '',
+      projectId:   process.env.FIREBASE_ADMIN_PROJECT_ID || process.env.project_id || '',
+      clientEmail: process.env.FIREBASE_ADMIN_CLIENT_EMAIL || process.env.client_email || '',
       privateKey:  privateKey ? privateKey.replace(/\\n/g, '\n') : '',
     }),
   })
