@@ -11,6 +11,7 @@ const company = [
   { label:'Clients',        href:'/#clients'  },
   { label:'Insights/Blog',  href:'/blog'      },
   { label:'Book Assessment',href:'/#booking'  },
+  { label:'Admin Portal',   href:'/blog/admin' },
 ]
 
 export default function Footer() {
