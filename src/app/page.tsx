@@ -111,6 +111,24 @@ export default function HomePage() {
             }} />
           ))}
         </div>
+
+        {/* Admin Portal link — always visible */}
+        <a
+          href="/blog/admin"
+          title="Blog Admin Portal"
+          style={{
+            display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.3rem',
+            padding: '0.65rem 0.5rem', borderRadius: 12, textDecoration: 'none',
+            background: 'rgba(11,21,40,0.07)',
+            border: '1px solid rgba(11,21,40,0.12)',
+            color: 'var(--forest)',
+            transition: 'all 0.25s', width: '100%', marginTop: '0.5rem',
+          }}
+        >
+          <span style={{ fontSize: '1.1rem', lineHeight: 1 }}>🛡️</span>
+          <span style={{ fontSize: '0.52rem', fontWeight: 700, textTransform: 'uppercase',
+            letterSpacing: '0.04em', whiteSpace: 'nowrap', color: 'var(--muted)' }}>Admin</span>
+        </a>
       </nav>
 
       {/* ── Mobile Bottom Tab Bar ───────────────────────────────────── */}
@@ -140,6 +158,23 @@ export default function HomePage() {
             </button>
           )
         })}
+        {/* Admin Portal link */}
+        <a
+          href="/blog/admin"
+          style={{
+            display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.2rem',
+            padding: '0.5rem 0.25rem', borderRadius: 10,
+            background: 'rgba(11,21,40,0.05)',
+            border: '1px solid rgba(11,21,40,0.1)',
+            flex: '0 0 auto', minWidth: 52,
+            color: 'var(--forest)', textDecoration: 'none',
+            transition: 'all 0.2s',
+          }}
+        >
+          <span style={{ fontSize: '1.15rem', lineHeight: 1 }}>🛡️</span>
+          <span style={{ fontSize: '0.5rem', fontWeight: 700, textTransform: 'uppercase',
+            letterSpacing: '0.04em', color: 'var(--muted)' }}>Admin</span>
+        </a>
       </nav>
 
       {/* ── Page Content Area ───────────────────────────────────────── */}
