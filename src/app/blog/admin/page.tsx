@@ -65,8 +65,8 @@ function parseMarkdown(md: string) {
 }
 
 export default function BlogAdminPage() {
-  // 'checking' | 'login' | 'authed'
-  const [authState, setAuthState] = useState<'checking' | 'login' | 'authed'>('checking')
+  // 'checking' | 'login' | 'setup' | 'authed'
+  const [authState, setAuthState] = useState<'checking' | 'login' | 'setup' | 'authed'>('checking')
   const [sessionToken, setSessionToken] = useState('')
   const [authLoading, setAuthLoading] = useState(false)
   const [authError, setAuthError] = useState('')
