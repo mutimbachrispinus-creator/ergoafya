@@ -412,6 +412,7 @@ export default function BlogAdminPage() {
           <p style={{ color: 'rgba(246,242,235,0.75)', fontSize: '0.88rem', marginTop: '0.4rem' }}>Create and publish articles to educate and grow Kenyan businesses.</p>
         </div>
         <div style={{ display: 'flex', gap: '0.7rem', flexWrap: 'wrap' }}>
+          <Link href="/" style={{ background: 'rgba(255,255,255,0.1)', color: 'var(--cream)', border: '1px solid rgba(255,255,255,0.2)', borderRadius: 100, padding: '0.6rem 1.2rem', fontFamily: "'Outfit',sans-serif", fontSize: '0.82rem', fontWeight: 600, cursor: 'pointer', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>🏠 Home</Link>
           <button onClick={() => setShowChangeCreds(true)} style={{ background: 'rgba(255,255,255,0.1)', color: 'var(--cream)', border: '1px solid rgba(255,255,255,0.2)', borderRadius: 100, padding: '0.6rem 1.2rem', fontFamily: "'Outfit',sans-serif", fontSize: '0.82rem', fontWeight: 600, cursor: 'pointer' }}>⚙️ Settings</button>
           <button onClick={handleLogout} style={{ background: 'rgba(217,70,36,0.2)', color: '#ffb3a0', border: '1px solid rgba(217,70,36,0.3)', borderRadius: 100, padding: '0.6rem 1.2rem', fontFamily: "'Outfit',sans-serif", fontSize: '0.82rem', fontWeight: 600, cursor: 'pointer' }}>🔒 Lock</button>
         </div>
