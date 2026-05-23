@@ -1,29 +1,35 @@
 'use client'
 import { useState, useEffect, useCallback } from 'react'
-import HeroSection        from '@/components/HeroSection'
-import StatsBand          from '@/components/StatsBand'
-import InteractiveTabs    from '@/components/InteractiveTabs'
-import ServicesSection    from '@/components/ServicesSection'
-import ClientsSection     from '@/components/ClientsSection'
+import HeroSection         from '@/components/HeroSection'
+import StatsBand           from '@/components/StatsBand'
+import InteractiveTabs     from '@/components/InteractiveTabs'
+import ServicesSection     from '@/components/ServicesSection'
+import ClientsSection      from '@/components/ClientsSection'
 import TestimonialsSection from '@/components/TestimonialsSection'
-import FAQSection         from '@/components/FAQSection'
-import BlogSection        from '@/components/BlogSection'
+import FAQSection          from '@/components/FAQSection'
+import BlogSection         from '@/components/BlogSection'
 
 const PAGES = [
-  { id: 'home',         label: 'Home',         icon: '🏠', desc: 'Welcome'       },
-  { id: 'services',     label: 'Services',     icon: '🛡️', desc: 'What We Do'    },
-  { id: 'expertise',    label: 'Expertise',    icon: '🎯', desc: 'Focus Areas'   },
-  { id: 'clients',      label: 'Clients',      icon: '🤝', desc: 'Who We Serve'  },
-  { id: 'testimonials', label: 'Testimonials', icon: '⭐', desc: 'Client Stories' },
-  { id: 'faq',          label: 'FAQ',          icon: '💬', desc: 'Questions'     },
-  { id: 'insights',     label: 'Insights',     icon: '📰', desc: 'Blog & News'   },
+  { id: 'home',         label: 'Home',         icon: '🏠', desc: 'Welcome'        },
+  { id: 'services',     label: 'Services',     icon: '🛡️', desc: 'What We Do'     },
+  { id: 'expertise',    label: 'Expertise',    icon: '🎯', desc: 'Focus Areas'    },
+  { id: 'clients',      label: 'Clients',      icon: '🤝', desc: 'Who We Serve'   },
+  { id: 'testimonials', label: 'Testimonials', icon: '⭐', desc: 'Client Stories'  },
+  { id: 'faq',          label: 'FAQ',          icon: '💬', desc: 'Questions'      },
+  { id: 'insights',     label: 'Insights',     icon: '📰', desc: 'Blog & News'    },
 ]
+
+const NAV_EXPANDED  = 88   // px — icon + label
+const NAV_COLLAPSED = 52   // px — icon only
 
 export default function HomePage() {
   const [activePage, setActivePage] = useState(0)
-  const [animating, setAnimating]   = useState(false)
-  const [direction, setDirection]   = useState<'next' | 'prev'>('next')
-  const [navOpen, setNavOpen]       = useState(false)
+  const [animating,  setAnimating]  = useState(false)
+  const [direction,  setDirection]  = useState<'next' | 'prev'>('next')
+  const [navOpen,    setNavOpen]    = useState(false)  // unused on desktop but kept for mobile goTo reset
+  const [sideOpen,   setSideOpen]   = useState(true)   // collapsible state
+
+  const navW = sideOpen ? NAV_EXPANDED : NAV_COLLAPSED
 
   const goTo = useCallback((idx: number) => {
     if (idx === activePage || animating) return
@@ -46,14 +52,14 @@ export default function HomePage() {
     return () => window.removeEventListener('keydown', onKey)
   }, [activePage, goTo])
 
-  // Touch swipe support
+  // Touch swipe
   useEffect(() => {
     let startX = 0, startY = 0
     const onTouchStart = (e: TouchEvent) => { startX = e.touches[0].clientX; startY = e.touches[0].clientY }
     const onTouchEnd   = (e: TouchEvent) => {
       const dx = e.changedTouches[0].clientX - startX
       const dy = e.changedTouches[0].clientY - startY
-      if (Math.abs(dx) < Math.abs(dy) || Math.abs(dy) < 40) return // vertical swipe — ignore
+      if (Math.abs(dx) < Math.abs(dy) || Math.abs(dy) < 40) return
       if (dx < -50) goTo(Math.min(activePage + 1, PAGES.length - 1))
       if (dx >  50) goTo(Math.max(activePage - 1, 0))
     }
@@ -70,8 +76,40 @@ export default function HomePage() {
   return (
     <div style={{ position: 'fixed', inset: 0, overflow: 'hidden', background: 'var(--cream)' }}>
 
-      {/* ── Desktop Side-Tab Navigator ─────────────────────────────── */}
-      <nav className="page-sidenav hide-mobile" aria-label="Page navigation">
+      {/* ── Desktop Side-Tab Navigator ──────────────────────────────────── */}
+      <nav
+        className="page-sidenav hide-mobile"
+        aria-label="Page navigation"
+        style={{ width: navW }}
+      >
+        {/* ── Collapse / Expand Toggle ── */}
+        <button
+          onClick={() => setSideOpen(o => !o)}
+          title={sideOpen ? 'Collapse sidebar' : 'Expand sidebar'}
+          style={{
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            width: '100%', padding: '0.55rem 0', border: 'none', cursor: 'pointer',
+            background: 'transparent', color: 'var(--muted)', borderRadius: 10,
+            transition: 'all 0.2s', marginBottom: '0.4rem',
+          }}
+        >
+          {/* Animated chevron */}
+          <svg
+            width="16" height="16" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"
+            style={{
+              transition: 'transform 0.3s',
+              transform: sideOpen ? 'rotate(0deg)' : 'rotate(180deg)',
+            }}
+          >
+            <polyline points="15 18 9 12 15 6" />
+          </svg>
+        </button>
+
+        {/* Thin divider */}
+        <div style={{ height: 1, background: 'var(--border)', margin: '0 0.4rem 0.5rem' }} />
+
+        {/* Page buttons */}
         {PAGES.map((p, i) => {
           const isActive = i === activePage
           return (
@@ -80,18 +118,29 @@ export default function HomePage() {
               onClick={() => goTo(i)}
               title={p.label}
               style={{
-                display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.3rem',
-                padding: '0.75rem 0.5rem', border: 'none', cursor: 'pointer', borderRadius: 12,
+                display: 'flex',
+                flexDirection: sideOpen ? 'column' : 'column',
+                alignItems: 'center',
+                gap: sideOpen ? '0.3rem' : '0',
+                padding: sideOpen ? '0.7rem 0.5rem' : '0.65rem 0.4rem',
+                border: 'none', cursor: 'pointer', borderRadius: 12,
                 background: isActive ? 'var(--sage)' : 'transparent',
                 color:      isActive ? 'white' : 'var(--muted)',
                 transition: 'all 0.25s', width: '100%',
-                boxShadow: isActive ? '0 4px 14px rgba(0,136,255,0.35)' : 'none',
-                transform: isActive ? 'scale(1.05)' : 'scale(1)',
+                boxShadow: isActive ? '0 4px 14px rgba(0,136,255,0.3)' : 'none',
+                transform: isActive ? 'scale(1.04)' : 'scale(1)',
+                overflow: 'hidden',
               }}
             >
-              <span style={{ fontSize: '1.2rem', lineHeight: 1 }}>{p.icon}</span>
-              <span style={{ fontSize: '0.58rem', fontWeight: 700, textTransform: 'uppercase',
-                letterSpacing: '0.04em', whiteSpace: 'nowrap' }}>
+              <span style={{ fontSize: '1.2rem', lineHeight: 1, flexShrink: 0 }}>{p.icon}</span>
+              <span style={{
+                fontSize: '0.56rem', fontWeight: 700, textTransform: 'uppercase',
+                letterSpacing: '0.04em', whiteSpace: 'nowrap',
+                maxHeight: sideOpen ? '20px' : '0px',
+                opacity: sideOpen ? 1 : 0,
+                overflow: 'hidden',
+                transition: 'max-height 0.3s, opacity 0.25s',
+              }}>
                 {p.label}
               </span>
             </button>
@@ -99,11 +148,13 @@ export default function HomePage() {
         })}
 
         {/* Progress dots */}
-        <div style={{ marginTop: 'auto', paddingTop: '1rem', display: 'flex', flexDirection: 'column',
-          alignItems: 'center', gap: '0.35rem' }}>
+        <div style={{
+          marginTop: 'auto', paddingTop: '0.8rem',
+          display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.3rem',
+        }}>
           {PAGES.map((_, i) => (
             <div key={i} style={{
-              width: i === activePage ? 6 : 4,
+              width:  i === activePage ? 6 : 4,
               height: i === activePage ? 6 : 4,
               borderRadius: '50%',
               background: i === activePage ? 'var(--sage)' : 'rgba(0,136,255,0.2)',
@@ -112,26 +163,32 @@ export default function HomePage() {
           ))}
         </div>
 
-        {/* Admin Portal link — always visible */}
+        {/* Admin Portal — always visible */}
         <a
           href="/blog/admin"
           title="Blog Admin Portal"
           style={{
-            display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.3rem',
-            padding: '0.65rem 0.5rem', borderRadius: 12, textDecoration: 'none',
-            background: 'rgba(11,21,40,0.07)',
-            border: '1px solid rgba(11,21,40,0.12)',
-            color: 'var(--forest)',
-            transition: 'all 0.25s', width: '100%', marginTop: '0.5rem',
+            display: 'flex', flexDirection: 'column', alignItems: 'center',
+            gap: sideOpen ? '0.3rem' : '0',
+            padding: '0.65rem 0.4rem', borderRadius: 12, textDecoration: 'none',
+            background: 'rgba(11,21,40,0.07)', border: '1px solid rgba(11,21,40,0.12)',
+            color: 'var(--forest)', transition: 'all 0.25s', width: '100%', marginTop: '0.5rem',
+            overflow: 'hidden',
           }}
         >
-          <span style={{ fontSize: '1.1rem', lineHeight: 1 }}>🛡️</span>
-          <span style={{ fontSize: '0.52rem', fontWeight: 700, textTransform: 'uppercase',
-            letterSpacing: '0.04em', whiteSpace: 'nowrap', color: 'var(--muted)' }}>Admin</span>
+          <span style={{ fontSize: '1.1rem', lineHeight: 1, flexShrink: 0 }}>🛡️</span>
+          <span style={{
+            fontSize: '0.52rem', fontWeight: 700, textTransform: 'uppercase',
+            letterSpacing: '0.04em', whiteSpace: 'nowrap', color: 'var(--muted)',
+            maxHeight: sideOpen ? '20px' : '0px',
+            opacity: sideOpen ? 1 : 0,
+            overflow: 'hidden',
+            transition: 'max-height 0.3s, opacity 0.25s',
+          }}>Admin</span>
         </a>
       </nav>
 
-      {/* ── Mobile Bottom Tab Bar ───────────────────────────────────── */}
+      {/* ── Mobile Bottom Tab Bar ──────────────────────────────────────────── */}
       <nav className="page-bottomnav hide-desktop" aria-label="Page navigation">
         {PAGES.map((p, i) => {
           const isActive = i === activePage
@@ -148,8 +205,7 @@ export default function HomePage() {
               }}
             >
               <span style={{ fontSize: '1.25rem', lineHeight: 1 }}>{p.icon}</span>
-              <span style={{ fontSize: '0.55rem', fontWeight: 700, textTransform: 'uppercase',
-                letterSpacing: '0.04em' }}>
+              <span style={{ fontSize: '0.55rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
                 {p.label}
               </span>
               {isActive && (
@@ -158,34 +214,49 @@ export default function HomePage() {
             </button>
           )
         })}
-        {/* Admin Portal link */}
         <a
           href="/blog/admin"
           style={{
             display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.2rem',
             padding: '0.5rem 0.25rem', borderRadius: 10,
-            background: 'rgba(11,21,40,0.05)',
-            border: '1px solid rgba(11,21,40,0.1)',
+            background: 'rgba(11,21,40,0.05)', border: '1px solid rgba(11,21,40,0.1)',
             flex: '0 0 auto', minWidth: 52,
-            color: 'var(--forest)', textDecoration: 'none',
-            transition: 'all 0.2s',
+            color: 'var(--forest)', textDecoration: 'none', transition: 'all 0.2s',
           }}
         >
           <span style={{ fontSize: '1.15rem', lineHeight: 1 }}>🛡️</span>
-          <span style={{ fontSize: '0.5rem', fontWeight: 700, textTransform: 'uppercase',
-            letterSpacing: '0.04em', color: 'var(--muted)' }}>Admin</span>
+          <span style={{ fontSize: '0.5rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em', color: 'var(--muted)' }}>Admin</span>
         </a>
       </nav>
 
-      {/* ── Page Content Area ───────────────────────────────────────── */}
-      <div className="page-content-area">
-
-        {/* Page header breadcrumb */}
+      {/* ── Page Content Area ──────────────────────────────────────────────── */}
+      <div
+        className="page-content-area"
+        style={{ left: navW }}
+      >
+        {/* Breadcrumb + toggle hint */}
         <div className="page-breadcrumb hide-mobile">
           <span style={{ color: 'var(--light)', fontSize: '0.72rem' }}>ErgoAfya</span>
           <span style={{ color: 'var(--border)', margin: '0 0.4rem' }}>›</span>
           <span style={{ color: 'var(--sage)', fontSize: '0.72rem', fontWeight: 700 }}>{page.label}</span>
           <span style={{ color: 'var(--light)', fontSize: '0.72rem', marginLeft: '0.3rem' }}>— {page.desc}</span>
+          {/* Collapse hint */}
+          <button
+            onClick={() => setSideOpen(o => !o)}
+            title={sideOpen ? 'Collapse sidebar' : 'Expand sidebar'}
+            style={{
+              marginLeft: 'auto', background: 'none', border: 'none', cursor: 'pointer',
+              display: 'flex', alignItems: 'center', gap: '0.3rem',
+              color: 'var(--light)', fontSize: '0.68rem', fontWeight: 600, padding: '0.2rem 0.5rem',
+              borderRadius: 6, transition: 'color 0.2s',
+            }}
+          >
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"
+              style={{ transform: sideOpen ? 'rotate(0deg)' : 'rotate(180deg)', transition: 'transform 0.3s' }}>
+              <polyline points="15 18 9 12 15 6" />
+            </svg>
+            {sideOpen ? 'Collapse' : 'Expand'}
+          </button>
         </div>
 
         {/* Animated page panel */}
@@ -194,12 +265,7 @@ export default function HomePage() {
           className={`page-panel ${animating ? (direction === 'next' ? 'page-exit-left' : 'page-exit-right') : 'page-enter'}`}
           style={{ overflowY: 'auto', height: '100%', scrollbarWidth: 'thin' }}
         >
-          {activePage === 0 && (
-            <>
-              <HeroSection />
-              <StatsBand />
-            </>
-          )}
+          {activePage === 0 && (<><HeroSection /><StatsBand /></>)}
           {activePage === 1 && <ServicesSection />}
           {activePage === 2 && <InteractiveTabs />}
           {activePage === 3 && <ClientsSection />}
@@ -208,7 +274,7 @@ export default function HomePage() {
           {activePage === 6 && <BlogSection />}
         </div>
 
-        {/* ── Prev / Next page arrows ─────────────────────────────── */}
+        {/* Prev / Next arrows */}
         <div className="page-arrows hide-mobile">
           <button
             onClick={() => goTo(activePage - 1)}
@@ -251,74 +317,56 @@ export default function HomePage() {
       </div>
 
       <style>{`
-        /* Side nav */
+        /* ── Side nav ─────────────────────────────────────────── */
         .page-sidenav {
           position: fixed;
           left: 0; top: 108px; bottom: 0;
-          width: 80px; z-index: 150;
+          z-index: 150;
           display: flex; flex-direction: column;
-          gap: 0.25rem; padding: 1.2rem 0.6rem 1.5rem;
-          background: rgba(255,255,255,0.92);
+          gap: 0.2rem; padding: 0.8rem 0.5rem 1.2rem;
+          background: rgba(255,255,255,0.93);
           backdrop-filter: blur(16px);
           border-right: 1px solid var(--border);
           box-shadow: 2px 0 16px rgba(11,21,40,0.04);
-        }
-
-        /* Content area — sits right of sidenav */
-        .page-content-area {
-          position: fixed;
-          left: 80px; right: 0; top: 108px; bottom: 0;
-          display: flex; flex-direction: column;
+          transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
           overflow: hidden;
         }
+
+        /* ── Content area ─────────────────────────────────────── */
+        .page-content-area {
+          position: fixed;
+          right: 0; top: 108px; bottom: 0;
+          display: flex; flex-direction: column;
+          overflow: hidden;
+          transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
         .page-breadcrumb {
-          padding: 0.6rem 2rem;
+          padding: 0.5rem 1.5rem;
           border-bottom: 1px solid var(--border);
-          background: rgba(255,255,255,0.7);
+          background: rgba(255,255,255,0.75);
           backdrop-filter: blur(8px);
           flex-shrink: 0;
           display: flex; align-items: center;
         }
 
-        /* Page transition panels */
-        .page-panel {
-          flex: 1;
-          min-height: 0;
-        }
-        .page-enter {
-          animation: pageEnter 0.35s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-        }
-        .page-exit-left {
-          animation: pageExitLeft 0.3s ease-in forwards;
-        }
-        .page-exit-right {
-          animation: pageExitRight 0.3s ease-in forwards;
-        }
-        @keyframes pageEnter {
-          from { opacity: 0; transform: translateX(28px); }
-          to   { opacity: 1; transform: translateX(0); }
-        }
-        @keyframes pageExitLeft {
-          from { opacity: 1; transform: translateX(0); }
-          to   { opacity: 0; transform: translateX(-28px); }
-        }
-        @keyframes pageExitRight {
-          from { opacity: 1; transform: translateX(0); }
-          to   { opacity: 0; transform: translateX(28px); }
-        }
+        /* ── Page transition panels ───────────────────────────── */
+        .page-panel { flex: 1; min-height: 0; }
+        .page-enter      { animation: pageEnter     0.35s cubic-bezier(0.22,1,0.36,1) forwards; }
+        .page-exit-left  { animation: pageExitLeft  0.3s ease-in forwards; }
+        .page-exit-right { animation: pageExitRight 0.3s ease-in forwards; }
+        @keyframes pageEnter      { from{opacity:0;transform:translateX(28px)} to{opacity:1;transform:translateX(0)} }
+        @keyframes pageExitLeft   { from{opacity:1;transform:translateX(0)}    to{opacity:0;transform:translateX(-28px)} }
+        @keyframes pageExitRight  { from{opacity:1;transform:translateX(0)}    to{opacity:0;transform:translateX(28px)} }
 
-        /* Prev/Next arrows */
+        /* ── Prev/Next arrows ─────────────────────────────────── */
         .page-arrows {
-          position: absolute;
-          bottom: 1.2rem; right: 2rem;
-          display: flex; align-items: center; gap: 0.8rem;
-          z-index: 20;
+          position: absolute; bottom: 1.2rem; right: 2rem;
+          display: flex; align-items: center; gap: 0.8rem; z-index: 20;
         }
 
-        /* Mobile bottom nav */
+        /* ── Mobile bottom nav ────────────────────────────────── */
         .page-bottomnav {
-          position: fixed;
-          bottom: 0; left: 0; right: 0;
+          position: fixed; bottom: 0; left: 0; right: 0;
           display: flex; align-items: center;
           background: rgba(255,255,255,0.96);
           backdrop-filter: blur(16px);
@@ -328,20 +376,21 @@ export default function HomePage() {
           box-shadow: 0 -4px 20px rgba(11,21,40,0.06);
         }
 
-        /* Mobile: expand content area to full width, move top offset up */
+        /* ── Mobile overrides ─────────────────────────────────── */
         @media (max-width: 768px) {
           .page-content-area {
             left: 0 !important;
             top: 72px !important;
             bottom: 64px !important;
+            transition: none !important;
           }
           .page-breadcrumb { display: none !important; }
-          .page-arrows { display: none !important; }
-          .page-panel { padding-bottom: 1rem; }
+          .page-arrows     { display: none !important; }
+          .page-panel      { padding-bottom: 1rem; }
         }
 
-        /* Scrollbar in content area */
-        .page-panel::-webkit-scrollbar { width: 4px; }
+        /* ── Scrollbar ────────────────────────────────────────── */
+        .page-panel::-webkit-scrollbar       { width: 4px; }
         .page-panel::-webkit-scrollbar-thumb { background: var(--sage); border-radius: 4px; }
         .page-panel::-webkit-scrollbar-track { background: transparent; }
       `}</style>
