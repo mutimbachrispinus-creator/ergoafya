@@ -55,8 +55,10 @@ export async function POST(req: NextRequest) {
       slug: parsed.data.title.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,''),
     })
     return NextResponse.json({ success: true, id: doc.id })
-  } catch (e) {
-    return NextResponse.json({ error: 'Failed to create post' }, { status: 500 })
+  } catch (e: any) {
+    const msg = e?.message || String(e)
+    console.error('[POST /api/blog] Firestore error:', msg)
+    return NextResponse.json({ error: `Failed to create post: ${msg}` }, { status: 500 })
   }
 }
 
@@ -71,7 +73,9 @@ export async function DELETE(req: NextRequest) {
     const { adminDb } = await import('@/lib/firebase-admin')
     await adminDb.collection('posts').doc(id).delete()
     return NextResponse.json({ success: true })
-  } catch (e) {
-    return NextResponse.json({ error: 'Failed to delete post' }, { status: 500 })
+  } catch (e: any) {
+    const msg = e?.message || String(e)
+    console.error('[DELETE /api/blog] Firestore error:', msg)
+    return NextResponse.json({ error: `Failed to delete post: ${msg}` }, { status: 500 })
   }
 }

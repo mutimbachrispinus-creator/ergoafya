@@ -251,7 +251,11 @@ export default function BlogAdminPage() {
       setForm({ title: '', category: 'Ergonomics Tips', excerpt: '', content: '', published: false })
       setActiveTab('edit')
       setTimeout(() => setStatus('idle'), 3000)
-    } catch (err: any) { setStatus('err'); setSaveError(err.message || 'Failed to publish post.') }
+    } catch (err: any) {
+      setStatus('err')
+      // Use the full server error message for easier debugging
+      setSaveError(err.message || 'Failed to publish post. Check Cloudflare secrets (FIREBASE_ADMIN_*).')
+    }
   }
 
   async function handleDelete(id: string) {
@@ -562,8 +566,13 @@ export default function BlogAdminPage() {
               </div>
 
               {status === 'err' && (
-                <div style={{ background: '#fcf3f2', border: '1px solid #f2cfca', color: '#d94624', padding: '0.8rem 1.2rem', borderRadius: 10, fontSize: '0.8rem' }}>
-                  ❌ {saveError}
+                <div style={{ background: '#fcf3f2', border: '1px solid #f2cfca', color: '#d94624', padding: '0.8rem 1.2rem', borderRadius: 10, fontSize: '0.82rem', lineHeight: 1.5 }}>
+                  <strong>❌ Error:</strong> {saveError}
+                  {saveError?.includes('FIREBASE') || saveError?.includes('credential') || saveError?.includes('private key') ? (
+                    <div style={{ marginTop: '0.5rem', fontSize: '0.75rem', background: 'rgba(217,70,36,0.08)', padding: '0.5rem', borderRadius: 6 }}>
+                      💡 <strong>Fix:</strong> Set <code>FIREBASE_ADMIN_PROJECT_ID</code>, <code>FIREBASE_ADMIN_CLIENT_EMAIL</code>, and <code>FIREBASE_ADMIN_PRIVATE_KEY</code> as Cloudflare secrets via: <code>wrangler secret put FIREBASE_ADMIN_PRIVATE_KEY</code>
+                    </div>
+                  ) : null}
                 </div>
               )}
 
@@ -694,45 +703,49 @@ export default function BlogAdminPage() {
                       </div>
 
                       {/* Actions */}
-                      <div style={{ display: 'flex', gap: '0.6rem', flexShrink: 0, alignItems: 'center' }}>
+                      <div style={{ display: 'flex', gap: '0.5rem', flexShrink: 0, alignItems: 'center', flexWrap: 'wrap' }}>
                         {!isConfirming && (
                           <Link
                             href={`/blog/${p.slug || p.title.toLowerCase().replace(/[^a-z0-9]+/g, '-')}?id=${p.id}`}
                             target="_blank"
                             style={{
-                              background: 'transparent',
-                              border: 'none',
-                              color: 'var(--light)',
-                              fontSize: '1rem',
+                              background: 'rgba(0,136,255,0.08)',
+                              border: '1px solid rgba(0,136,255,0.2)',
+                              color: 'var(--sage)',
+                              fontSize: '0.72rem',
+                              fontWeight: 600,
                               cursor: 'pointer',
-                              padding: '0.2rem 0.4rem',
-                              borderRadius: 6,
+                              padding: '0.35rem 0.7rem',
+                              borderRadius: 8,
                               transition: 'all 0.2s',
-                              textDecoration: 'none'
+                              textDecoration: 'none',
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: '0.25rem'
                             }}
-                            onMouseEnter={e => e.currentTarget.style.color = 'var(--sage)'}
-                            onMouseLeave={e => e.currentTarget.style.color = 'var(--light)'}
-                            title="View Article Details"
+                            title="View live article"
                           >
-                            👁️
+                            👁️ View
                           </Link>
                         )}
                         {isConfirming ? (
-                          <div style={{ display: 'flex', gap: '0.3rem', alignItems: 'center' }}>
+                          <div style={{ display: 'flex', gap: '0.4rem', alignItems: 'center' }}>
+                            <span style={{ fontSize: '0.7rem', color: '#d94624', fontWeight: 600 }}>Delete?</span>
                             <button
                               onClick={() => handleDelete(p.id)}
                               style={{
                                 background: '#d94624',
                                 color: 'white',
                                 border: 'none',
-                                borderRadius: 6,
-                                padding: '0.35rem 0.6rem',
+                                borderRadius: 8,
+                                padding: '0.35rem 0.75rem',
                                 fontSize: '0.72rem',
                                 fontWeight: 700,
-                                cursor: 'pointer'
+                                cursor: 'pointer',
+                                fontFamily: "'Outfit',sans-serif"
                               }}
                             >
-                              Confirm
+                              Yes, delete
                             </button>
                             <button
                               onClick={() => setDeleteConfirmId(null)}
@@ -740,11 +753,12 @@ export default function BlogAdminPage() {
                                 background: 'var(--cream)',
                                 color: 'var(--forest)',
                                 border: '1px solid var(--border)',
-                                borderRadius: 6,
-                                padding: '0.35rem 0.6rem',
+                                borderRadius: 8,
+                                padding: '0.35rem 0.7rem',
                                 fontSize: '0.72rem',
                                 fontWeight: 600,
-                                cursor: 'pointer'
+                                cursor: 'pointer',
+                                fontFamily: "'Outfit',sans-serif"
                               }}
                             >
                               Cancel
@@ -754,20 +768,23 @@ export default function BlogAdminPage() {
                           <button
                             onClick={() => setDeleteConfirmId(p.id)}
                             style={{
-                              background: 'transparent',
-                              border: 'none',
-                              color: 'var(--light)',
-                              fontSize: '1rem',
+                              background: 'rgba(217,70,36,0.08)',
+                              border: '1px solid rgba(217,70,36,0.25)',
+                              color: '#d94624',
+                              fontSize: '0.72rem',
+                              fontWeight: 700,
                               cursor: 'pointer',
-                              padding: '0.2rem 0.4rem',
-                              borderRadius: 6,
+                              padding: '0.35rem 0.7rem',
+                              borderRadius: 8,
                               transition: 'all 0.2s',
+                              fontFamily: "'Outfit',sans-serif",
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: '0.25rem'
                             }}
-                            onMouseEnter={e => e.currentTarget.style.color = '#d94624'}
-                            onMouseLeave={e => e.currentTarget.style.color = 'var(--light)'}
                             title="Delete Article"
                           >
-                            🗑️
+                            🗑️ Delete
                           </button>
                         )}
                       </div>
