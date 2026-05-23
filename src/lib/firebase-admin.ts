@@ -8,10 +8,13 @@ function getAdminApp() {
     console.error('FIREBASE_ADMIN_PRIVATE_KEY is not set')
   }
 
+  const projectId = process.env.FIREBASE_ADMIN_PROJECT_ID || process.env.project_id || process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || 'paav-d67cb'
+  const clientEmail = process.env.FIREBASE_ADMIN_CLIENT_EMAIL || process.env.client_email || `firebase-adminsdk@${projectId}.iam.gserviceaccount.com`
+
   return initializeApp({
     credential: cert({
-      projectId:   process.env.FIREBASE_ADMIN_PROJECT_ID || process.env.project_id || '',
-      clientEmail: process.env.FIREBASE_ADMIN_CLIENT_EMAIL || process.env.client_email || '',
+      projectId,
+      clientEmail,
       privateKey:  privateKey ? privateKey.replace(/\\n/g, '\n') : '',
     }),
   })
