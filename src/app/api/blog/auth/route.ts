@@ -55,7 +55,7 @@ async function getCredentials(): Promise<{ username: string; passwordHash: strin
 // ── Save credentials to Firestore ─────────────────────────────────────────────
 async function saveCredentials(username: string, passwordHash: string) {
   const { firestoreRequest, toFirestoreFields } = await import('@/lib/firestore-rest')
-  await firestoreRequest('/_admin/credentials?updateMask=username&updateMask=passwordHash', {
+  await firestoreRequest('/_admin/credentials?updateMask.fieldPaths=username&updateMask.fieldPaths=passwordHash', {
     method: 'PATCH',
     body: JSON.stringify({
       fields: toFirestoreFields({ username, passwordHash })
