@@ -32,7 +32,7 @@ export async function GET(req: NextRequest) {
     
     const headers: Record<string, string> = adminAccess
       ? { 'Cache-Control': 'no-store, max-age=0' }
-      : { 'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600' }
+      : { 'Cache-Control': 'public, s-maxage=15, stale-while-revalidate=30' }
     return NextResponse.json({ posts }, { headers })
   } catch (e: any) {
     const msg = e?.message || String(e)

@@ -172,8 +172,8 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
   useEffect(() => {
     async function loadPost() {
       try {
-        // Try fetching all posts and search for slug/id
-        const res = await fetch('/api/blog')
+        // Try fetching all posts and search for slug/id (with cache buster to avoid edge cache delays)
+        const res = await fetch(`/api/blog?t=${Date.now()}`)
         const data = await res.json()
         
         let foundPost = null
