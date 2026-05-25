@@ -7,6 +7,10 @@ import ClientsSection     from '@/components/ClientsSection'
 import TestimonialsSection from '@/components/TestimonialsSection'
 import FAQSection         from '@/components/FAQSection'
 import BlogSection        from '@/components/BlogSection'
+import ApproachSection    from '@/components/ApproachSection'
+import LeadConsultantSection from '@/components/LeadConsultantSection'
+import FinalCTASection    from '@/components/FinalCTASection'
+import LeadMagnetSection  from '@/components/LeadMagnetSection'
 
 export default function HomePage() {
   return (
@@ -17,9 +21,13 @@ export default function HomePage() {
         <ServicesSection />
         <InteractiveTabs />
         <ClientsSection />
+        <ApproachSection />
+        <LeadConsultantSection />
         <TestimonialsSection />
         <FAQSection />
+        <LeadMagnetSection />
         <BlogSection />
+        <FinalCTASection />
       </div>
     </main>
   )
