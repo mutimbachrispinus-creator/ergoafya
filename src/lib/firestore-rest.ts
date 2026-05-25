@@ -183,7 +183,7 @@ export async function listBlogPosts(options: { adminAccess: boolean; limit: numb
 }
 
 export async function createBlogPost(post: Record<string, unknown>) {
-  const doc = await firestoreRequest('/posts', {
+  const doc = await firestoreRequest('?collectionId=posts', {
     method: 'POST',
     body: JSON.stringify({ fields: toFirestoreFields(post) }),
   })
