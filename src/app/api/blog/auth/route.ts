@@ -36,13 +36,10 @@ function hashPassword(pw: string): string {
 // ── Load credentials from Firestore, falling back to env vars ─────────────────
 async function getCredentials(): Promise<{ username: string; passwordHash: string }> {
   try {
-    const { getDb } = await import('@/lib/firebase')
-    const db = getDb()
-    // @ts-ignore
-    const { doc, getDoc } = await import('firebase/firestore/lite')
-    const d = await getDoc(doc(db, '_admin', 'credentials'))
-    if (d.exists()) {
-      const data = d.data()!
+    const { firestoreRequest, fromFirestoreDocument } = await import('@/lib/firestore-rest')
+    const d = await firestoreRequest('/_admin/credentials')
+    if (d && d.name) {
+      const data = fromFirestoreDocument(d) as any
       return { username: data.username, passwordHash: data.passwordHash }
     }
   } catch (e) {
@@ -57,11 +54,13 @@ async function getCredentials(): Promise<{ username: string; passwordHash: strin
 
 // ── Save credentials to Firestore ─────────────────────────────────────────────
 async function saveCredentials(username: string, passwordHash: string) {
-  const { getDb } = await import('@/lib/firebase')
-  const db = getDb()
-  // @ts-ignore
-  const { doc, setDoc } = await import('firebase/firestore/lite')
-  await setDoc(doc(db, '_admin', 'credentials'), { username, passwordHash }, { merge: true })
+  const { firestoreRequest, toFirestoreFields } = await import('@/lib/firestore-rest')
+  await firestoreRequest('/_admin/credentials?updateMask=username&updateMask=passwordHash', {
+    method: 'PATCH',
+    body: JSON.stringify({
+      fields: toFirestoreFields({ username, passwordHash })
+    }),
+  })
 }
 
 // ── GET — always returns needsSetup: false ─────────────────────────────────────

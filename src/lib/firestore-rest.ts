@@ -122,18 +122,18 @@ function fromFirestoreValue(value: any) {
   return null
 }
 
-function toFirestoreFields(data: Record<string, unknown>): FirestoreFields {
+export function toFirestoreFields(data: Record<string, unknown>): FirestoreFields {
   return Object.fromEntries(Object.entries(data).map(([key, value]) => [key, firestoreValue(value)]))
 }
 
-function fromFirestoreDocument(doc: any) {
+export function fromFirestoreDocument(doc: any) {
   const fields = doc.fields || {}
   const id = String(doc.name || '').split('/').pop()
   const data = Object.fromEntries(Object.entries(fields).map(([key, value]) => [key, fromFirestoreValue(value)]))
   return { id, ...data }
 }
 
-async function firestoreRequest(path: string, init: RequestInit = {}) {
+export async function firestoreRequest(path: string, init: RequestInit = {}) {
   const { projectId } = getServiceAccount()
   const token = await getAccessToken()
   const res = await fetch(`https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents${path}`, {
