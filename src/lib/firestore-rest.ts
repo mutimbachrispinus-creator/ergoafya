@@ -183,11 +183,15 @@ export async function listBlogPosts(options: { adminAccess: boolean; limit: numb
 }
 
 export async function createBlogPost(post: Record<string, unknown>) {
-  const doc = await firestoreRequest('?collectionId=posts', {
-    method: 'POST',
-    body: JSON.stringify({ fields: toFirestoreFields(post) }),
+  const id = crypto.randomUUID().replace(/-/g, '')
+  const doc = await firestoreRequest(`/posts/${id}`, {
+    method: 'PATCH',
+    body: JSON.stringify({ 
+      name: `projects/${getServiceAccount().projectId}/databases/(default)/documents/posts/${id}`,
+      fields: toFirestoreFields(post) 
+    }),
   })
-  return String(doc.name || '').split('/').pop()
+  return id
 }
 
 export async function deleteBlogPost(id: string) {
