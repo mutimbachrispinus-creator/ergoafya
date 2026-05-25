@@ -119,7 +119,7 @@ export default function BlogAdminPage() {
 
   // On mount: try stored token, otherwise show login
   useEffect(() => {
-    const stored = localStorage.getItem('ergoafya_admin_token')
+    const stored = sessionStorage.getItem('ergoafya_admin_token')
     if (stored) {
       loginWithToken(stored)
     } else {
@@ -138,7 +138,7 @@ export default function BlogAdminPage() {
         return
       }
     } catch {}
-    localStorage.removeItem('ergoafya_admin_token')
+    sessionStorage.removeItem('ergoafya_admin_token')
     setAuthState('login')
   }
 
@@ -154,7 +154,7 @@ export default function BlogAdminPage() {
       })
       const data = await readApiJson(res)
       if (res.ok && data.success) {
-        localStorage.setItem('ergoafya_admin_token', data.sessionToken)
+        sessionStorage.setItem('ergoafya_admin_token', data.sessionToken)
         setSessionToken(data.sessionToken)
         setAuthState('authed')
         fetchPosts(data.sessionToken)
@@ -182,7 +182,7 @@ export default function BlogAdminPage() {
       })
       const data = await readApiJson(res)
       if (res.ok && data.success) {
-        localStorage.setItem('ergoafya_admin_token', data.sessionToken)
+        sessionStorage.setItem('ergoafya_admin_token', data.sessionToken)
         setSessionToken(data.sessionToken)
         setAuthState('authed')
         fetchPosts(data.sessionToken)
@@ -239,7 +239,7 @@ export default function BlogAdminPage() {
   }
 
   function handleLogout() {
-    localStorage.removeItem('ergoafya_admin_token')
+    sessionStorage.removeItem('ergoafya_admin_token')
     setAuthState('login')
     setSessionToken('')
     setPosts([])
