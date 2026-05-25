@@ -77,7 +77,7 @@ async function getAccessToken() {
   const header = base64Url(JSON.stringify({ alg: 'RS256', typ: 'JWT' }))
   const payload = base64Url(JSON.stringify({
     iss: clientEmail,
-    scope: 'https://www.googleapis.com/auth/datastore',
+    scope: 'https://www.googleapis.com/auth/datastore https://www.googleapis.com/auth/cloud-platform',
     aud: 'https://oauth2.googleapis.com/token',
     iat: now,
     exp: now + 3600,
@@ -147,6 +147,9 @@ async function firestoreRequest(path: string, init: RequestInit = {}) {
 
   const data: any = await res.json().catch(() => ({}))
   if (!res.ok) {
+    if (res.status === 403 || res.status === 401) {
+      throw new Error(`${data.error?.message || 'Missing or insufficient permissions.'} (Project ID used: ${projectId}, Service Account: ${getServiceAccount().clientEmail}). Please ensure they match the same Firebase project.`)
+    }
     throw new Error(data.error?.message || `Firestore REST failed with HTTP ${res.status}`)
   }
   return data
