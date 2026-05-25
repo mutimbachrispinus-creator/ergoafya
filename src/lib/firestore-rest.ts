@@ -160,18 +160,8 @@ export async function listBlogPosts(options: { adminAccess: boolean; limit: numb
     structuredQuery: {
       from: [{ collectionId: 'posts' }],
       orderBy: [{ field: { fieldPath: 'createdAt' }, direction: 'DESCENDING' }],
-      limit: options.limit,
+      limit: options.adminAccess ? options.limit : options.limit * 3, // Fetch more to account for filtering
     },
-  }
-
-  if (!options.adminAccess) {
-    queryBody.structuredQuery.where = {
-      fieldFilter: {
-        field: { fieldPath: 'published' },
-        op: 'EQUAL',
-        value: { booleanValue: true },
-      },
-    }
   }
 
   const rows = await firestoreRequest(':runQuery', {
@@ -179,7 +169,13 @@ export async function listBlogPosts(options: { adminAccess: boolean; limit: numb
     body: JSON.stringify(queryBody),
   })
 
-  return rows.filter((row: any) => row.document).map((row: any) => fromFirestoreDocument(row.document))
+  let posts = rows.filter((row: any) => row.document).map((row: any) => fromFirestoreDocument(row.document))
+  
+  if (!options.adminAccess) {
+    posts = posts.filter((p: any) => p.published === true)
+  }
+  
+  return posts.slice(0, options.limit)
 }
 
 export async function createBlogPost(post: Record<string, unknown>) {
