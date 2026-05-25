@@ -69,7 +69,7 @@ export default function BlogPage() {
   useEffect(() => {
     async function loadPosts() {
       try {
-        const res = await fetch('/api/blog')
+        const res = await fetch(`/api/blog?t=${Date.now()}`)
         const data = await res.json()
         if (res.ok && data.posts && data.posts.length > 0) {
           setPosts(data.posts)
