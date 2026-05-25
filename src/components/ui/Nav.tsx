@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { ErgoAfyaLogo } from './Logo'
 
 const links = [
+  { href: '/',         label: 'Home'     },
   { href: '/about',    label: 'About'    },
   { href: '/services', label: 'Services' },
   { href: '/blog',      label: 'Insights' },
