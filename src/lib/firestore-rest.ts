@@ -12,9 +12,9 @@ type FirestoreFields = Record<string, FirestoreValue>
 let cachedAccessToken: { token: string; expiresAt: number } | null = null
 
 function getServiceAccount() {
-  const projectId = env('FIREBASE_ADMIN_PROJECT_ID', 'firebase_admin_project_id', 'project_id', 'projectId', 'NEXT_PUBLIC_FIREBASE_PROJECT_ID', 'next_public_firebase_project_id')
-  const clientEmail = env('FIREBASE_ADMIN_CLIENT_EMAIL', 'firebase_admin_client_email', 'client_email')
-  const privateKey = env('FIREBASE_ADMIN_PRIVATE_KEY', 'firebase_admin_private_key', 'private_key')
+  const projectId = env('FIREBASE_ADMIN_PROJECT_ID', 'firebase_admin_project_id', 'project_id', 'projectId', 'PROJECT_ID', 'NEXT_PUBLIC_FIREBASE_PROJECT_ID')
+  const clientEmail = env('FIREBASE_ADMIN_CLIENT_EMAIL', 'firebase_admin_client_email', 'client_email', 'CLIENT_EMAIL')
+  const privateKey = env('FIREBASE_ADMIN_PRIVATE_KEY', 'firebase_admin_private_key', 'private_key', 'PRIVATE_KEY')
 
   if (!projectId || !clientEmail || !privateKey) {
     throw new Error('Missing Firebase Admin service account secrets. Set FIREBASE_ADMIN_PROJECT_ID/FIREBASE_ADMIN_CLIENT_EMAIL/FIREBASE_ADMIN_PRIVATE_KEY or their lowercase equivalents in Cloudflare.')
