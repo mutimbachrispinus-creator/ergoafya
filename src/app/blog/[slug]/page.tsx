@@ -172,8 +172,12 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
   useEffect(() => {
     async function loadPost() {
       try {
+        const token = typeof sessionStorage !== 'undefined' ? sessionStorage.getItem('ergoafya_admin_token') : null
+        const headers: any = {}
+        if (token) headers['Authorization'] = `Bearer ${token}`
+        
         // Try fetching all posts and search for slug/id (with cache buster to avoid edge cache delays)
-        const res = await fetch(`/api/blog?t=${Date.now()}`)
+        const res = await fetch(`/api/blog?t=${Date.now()}`, { headers })
         const data = await res.json()
         
         let foundPost = null

@@ -69,7 +69,11 @@ export default function BlogPage() {
   useEffect(() => {
     async function loadPosts() {
       try {
-        const res = await fetch(`/api/blog?t=${Date.now()}`)
+        const token = typeof sessionStorage !== 'undefined' ? sessionStorage.getItem('ergoafya_admin_token') : null
+        const headers: any = {}
+        if (token) headers['Authorization'] = `Bearer ${token}`
+        
+        const res = await fetch(`/api/blog?t=${Date.now()}`, { headers })
         const data = await res.json()
         if (res.ok && data.posts && data.posts.length > 0) {
           setPosts(data.posts)
