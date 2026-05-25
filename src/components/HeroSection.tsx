@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { ErgoAfyaLogo } from './ui/Logo'
+import HeroSlider from './ui/HeroSlider'
 
 export default function HeroSection() {
   return (
@@ -96,79 +96,7 @@ export default function HeroSection() {
 
       {/* Right — visual card */}
       <div style={{position:'relative',zIndex:2}} className="hide-mobile">
-        <div style={{position:'relative',padding:'2rem 2rem 2.5rem'}}>
-          {/* Floating pill top */}
-          <div style={{
-            position:'absolute',top:'.2rem',right:'0',zIndex:3,
-            background:'white',borderRadius:12,padding:'.7rem 1rem',
-            boxShadow:'0 8px 32px rgba(15,35,24,.12)',border:'1px solid var(--border)',
-            fontSize:'.78rem',fontWeight:600,color:'var(--forest)',
-            display:'flex',alignItems:'center',gap:'.5rem',
-            animation:'float 5s ease-in-out infinite',
-          }}>
-            <div style={{width:28,height:28,borderRadius:8,background:'var(--card)',
-              display:'flex',alignItems:'center',justifyContent:'center'}}>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#4aac78" strokeWidth="2">
-                <path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/>
-              </svg>
-            </div>
-            OT-Licensed Practice
-          </div>
-
-          {/* Main card */}
-          <div style={{background:'white',borderRadius:24,
-            boxShadow:'0 20px 60px rgba(15,35,24,.12)',overflow:'hidden'}}>
-            <div style={{background:'var(--forest)',padding:'2rem',position:'relative',overflow:'hidden'}}>
-              <div style={{position:'absolute',top:-30,right:-30,width:120,height:120,
-                borderRadius:'50%',background:'rgba(74,172,120,.15)'}}/>
-              <div style={{marginBottom:'1rem',position:'relative',zIndex:1}}>
-                <ErgoAfyaLogo size={128} variant="full" shinyText={true} />
-              </div>
-              <h3 className="serif" style={{color:'var(--cream)',fontSize:'1.35rem',
-                fontWeight:700,lineHeight:1.2,position:'relative',zIndex:1}}>
-                Occupational Therapy-Led<br/>Ergonomic Interventions
-              </h3>
-              <p style={{color:'var(--mint)',fontSize:'.78rem',marginTop:'.3rem',position:'relative',zIndex:1}}>
-                Evidence-based · Practical · Kenya-tailored
-              </p>
-            </div>
-            <div style={{padding:'1.5rem 2rem'}}>
-              <div style={{display:'flex',flexWrap:'wrap',gap:'.5rem',marginBottom:'1.5rem'}}>
-                {['Workstation Assessment','MSD Prevention','Back Care Training',
-                  'Return-to-Work','Posture Programs','Rehab Support'].map(s=>(
-                  <span key={s} style={{
-                    padding:'.35rem .75rem',borderRadius:100,fontSize:'.72rem',
-                    fontWeight:600,background:'var(--card)',color:'var(--leaf)',
-                    border:'1px solid var(--border)',
-                  }}>{s}</span>
-                ))}
-              </div>
-              <div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:'1rem',
-                paddingTop:'1rem',borderTop:'1px solid var(--border)'}}>
-                {[['7+','Services'],['4','Step Process'],['3','Sectors']].map(([n,l])=>(
-                  <div key={l}>
-                    <div className="serif" style={{fontSize:'1.8rem',fontWeight:700,color:'var(--forest)',lineHeight:1}}>
-                      {n}
-                    </div>
-                    <div style={{fontSize:'.7rem',color:'var(--muted)',marginTop:2}}>{l}</div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {/* Floating pill bottom */}
-          <div style={{
-            position:'absolute',bottom:'0',left:'0',zIndex:3,
-            background:'white',borderRadius:12,padding:'.7rem 1rem',
-            boxShadow:'0 8px 32px rgba(15,35,24,.12)',border:'1px solid var(--border)',
-            fontSize:'.78rem',fontWeight:600,color:'var(--forest)',
-            display:'flex',alignItems:'center',gap:'.5rem',
-            animation:'float 5s ease-in-out infinite',animationDelay:'2.5s',
-          }}>
-            <span>📍</span> Upperhill Gardens, Nairobi
-          </div>
-        </div>
+        <HeroSlider />
       </div>
 
       <style>{`
