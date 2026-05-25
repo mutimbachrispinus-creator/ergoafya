@@ -63,9 +63,15 @@ async function saveCredentials(username: string, passwordHash: string) {
   })
 }
 
-// ── GET — always returns needsSetup: false ─────────────────────────────────────
-export async function GET() {
-  return NextResponse.json({ needsSetup: false })
+// ── GET — check if token is valid ──────────────────────────────────────────────
+export async function GET(req: NextRequest) {
+  const authHeader = req.headers.get('authorization')
+  if (!authHeader?.startsWith('Bearer ')) {
+    return NextResponse.json({ valid: false })
+  }
+  const token = authHeader.substring(7)
+  const isValid = verifySessionToken(token)
+  return NextResponse.json({ valid: isValid })
 }
 
 // ── POST — login with username + password ─────────────────────────────────────

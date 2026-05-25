@@ -129,12 +129,13 @@ export default function BlogAdminPage() {
 
   async function loginWithToken(token: string) {
     try {
-      const res = await fetch('/api/blog', { headers: { 'Authorization': `Bearer ${token}` } })
-      if (res.ok) {
-        const data = await readApiJson(res)
+      const authRes = await fetch('/api/blog/auth', { headers: { 'Authorization': `Bearer ${token}` } })
+      const authData = await authRes.json()
+      
+      if (authRes.ok && authData.valid) {
         setSessionToken(token)
         setAuthState('authed')
-        setPosts(data.posts || [])
+        fetchPosts(token)
         return
       }
     } catch {}
