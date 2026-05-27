@@ -162,6 +162,15 @@ function parseMarkdown(md: string) {
   return html
 }
 
+function videoEmbedUrl(url: string) {
+  if (!url) return ''
+  const youtube = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([A-Za-z0-9_-]{6,})/)
+  if (youtube) return `https://www.youtube.com/embed/${youtube[1]}`
+  const vimeo = url.match(/vimeo\.com\/(?:video\/)?([0-9]+)/)
+  if (vimeo) return `https://player.vimeo.com/video/${vimeo[1]}`
+  return ''
+}
+
 export default function BlogPostPage({ params }: { params: { slug: string } }) {
   const searchParams = useSearchParams()
   const id = searchParams.get('id')
@@ -302,6 +311,27 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
             borderRadius: 24, padding: '3.5rem 3rem', fontSize: '1rem', lineHeight: 1.8, color: 'var(--muted)',
             boxShadow: '0 4px 20px rgba(15,35,24,0.01)'
           }} className="article-body-container">
+            {(post.imageUrl || post.videoUrl) && (
+              <figure style={{ marginBottom: '2rem' }}>
+                {post.imageUrl && (
+                  <img src={post.imageUrl} alt={post.imageAlt || post.title} style={{ width: '100%', maxHeight: 460, objectFit: 'cover', borderRadius: 12, border: '1px solid var(--border)', display: 'block' }} />
+                )}
+                {post.videoUrl && (
+                  <div style={{ marginTop: post.imageUrl ? '1rem' : 0, aspectRatio: '16 / 9', overflow: 'hidden', borderRadius: 12, background: 'var(--forest)', border: '1px solid var(--border)' }}>
+                    {videoEmbedUrl(post.videoUrl) ? (
+                      <iframe src={videoEmbedUrl(post.videoUrl)} title={`${post.title} video`} allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen style={{ width: '100%', height: '100%', border: 0, display: 'block' }} />
+                    ) : (
+                      <video src={post.videoUrl} controls style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+                    )}
+                  </div>
+                )}
+                {post.mediaCaption && (
+                  <figcaption style={{ color: 'var(--muted)', fontSize: '0.82rem', marginTop: '0.7rem', lineHeight: 1.5 }}>
+                    {post.mediaCaption}
+                  </figcaption>
+                )}
+              </figure>
+            )}
             {post.excerpt && (
               <p style={{
                 marginBottom: '2rem', fontSize: '1.08rem', color: 'var(--forest)',

@@ -95,6 +95,11 @@ export default function BlogPage() {
     ? posts
     : posts.filter(p => p.category === activeCat)
 
+  function youtubeThumbnail(url: string) {
+    const match = url?.match(/(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([A-Za-z0-9_-]{6,})/)
+    return match ? `https://img.youtube.com/vi/${match[1]}/hqdefault.jpg` : ''
+  }
+
   return (
     <main style={{ paddingTop: 108 }}>
       {/* Hero Section */}
@@ -194,8 +199,15 @@ export default function BlogPage() {
                   style={{ textDecoration: 'none', display: 'flex', flexDirection: 'column', background: 'var(--white)', border: '1px solid var(--border)', borderRadius: 24, overflow: 'hidden', transition: 'all 0.35s' }}
                   className="blog-card"
                 >
-                  <div style={{ height: 160, background: p.color || 'linear-gradient(135deg, var(--forest), var(--leaf))', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', overflow: 'hidden' }}>
-                    <span style={{ fontSize: '3rem', opacity: 0.2 }}>📚</span>
+                  <div style={{ height: 180, background: p.color || 'linear-gradient(135deg, var(--forest), var(--leaf))', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', overflow: 'hidden' }}>
+                    {p.imageUrl || youtubeThumbnail(p.videoUrl) ? (
+                      <img src={p.imageUrl || youtubeThumbnail(p.videoUrl)} alt={p.imageAlt || p.title} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+                    ) : (
+                      <span style={{ fontSize: '3rem', opacity: 0.2 }}>📚</span>
+                    )}
+                    {p.videoUrl && (
+                      <span style={{ position: 'absolute', right: 14, bottom: 14, width: 42, height: 42, borderRadius: '50%', background: 'rgba(11,21,40,0.82)', color: 'white', display: 'grid', placeItems: 'center', fontSize: '1rem' }}>▶</span>
+                    )}
                     <div style={{ position: 'absolute', top: 16, left: 16, background: 'var(--sage)', color: 'white', fontSize: '0.65rem', fontWeight: 700, padding: '0.35rem 0.8rem', borderRadius: 100, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                       {p.category}
                     </div>

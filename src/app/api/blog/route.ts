@@ -10,6 +10,10 @@ const PostSchema = z.object({
   category:  z.string(),
   author:    z.string().default('ErgoAfya Team'),
   published: z.boolean().default(false),
+  imageUrl:  z.string().trim().optional().default(''),
+  imageAlt:  z.string().trim().optional().default(''),
+  videoUrl:  z.string().trim().optional().default(''),
+  mediaCaption: z.string().trim().optional().default(''),
 })
 
 function isAuthorized(req: NextRequest): boolean {

@@ -76,6 +76,15 @@ async function readApiJson(res: Response) {
   throw new Error(`Server returned ${res.status} ${res.statusText || 'response'} instead of JSON.${detail}`)
 }
 
+function videoEmbedUrl(url: string) {
+  if (!url) return ''
+  const youtube = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([A-Za-z0-9_-]{6,})/)
+  if (youtube) return `https://www.youtube.com/embed/${youtube[1]}`
+  const vimeo = url.match(/vimeo\.com\/(?:video\/)?([0-9]+)/)
+  if (vimeo) return `https://player.vimeo.com/video/${vimeo[1]}`
+  return ''
+}
+
 export default function BlogAdminPage() {
   // 'checking' | 'login' | 'setup' | 'authed'
   const [authState, setAuthState] = useState<'checking' | 'login' | 'setup' | 'authed'>('checking')
@@ -97,6 +106,10 @@ export default function BlogAdminPage() {
     category: 'Ergonomics Tips',
     excerpt: '',
     content: '',
+    imageUrl: '',
+    imageAlt: '',
+    videoUrl: '',
+    mediaCaption: '',
     published: false,
   })
   const [activeTab, setActiveTab] = useState<'edit' | 'preview'>('edit')
@@ -261,7 +274,7 @@ export default function BlogAdminPage() {
       if (!res.ok) throw new Error(json.error || 'Save failed')
       setStatus('ok')
       fetchPosts(sessionToken)
-      setForm({ title: '', category: 'Ergonomics Tips', excerpt: '', content: '', published: false })
+      setForm({ title: '', category: 'Ergonomics Tips', excerpt: '', content: '', imageUrl: '', imageAlt: '', videoUrl: '', mediaCaption: '', published: false })
       setActiveTab('edit')
       setTimeout(() => setStatus('idle'), 3000)
     } catch (err: any) {
@@ -536,6 +549,49 @@ export default function BlogAdminPage() {
                 </span>
               </div>
 
+              <div style={{ background: 'linear-gradient(180deg, rgba(0,119,255,0.06), rgba(77,184,255,0.04))', border: '1px solid var(--border)', borderRadius: 12, padding: '1.2rem', display: 'grid', gap: '1rem' }}>
+                <div>
+                  <label style={lStyle}>Featured Image URL</label>
+                  <input
+                    type="url"
+                    value={form.imageUrl}
+                    onChange={e => setForm(f => ({ ...f, imageUrl: e.target.value }))}
+                    style={iStyle}
+                    placeholder="https://example.com/workstation-assessment.jpg"
+                  />
+                </div>
+                <div className="composer-row-1" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                  <div>
+                    <label style={lStyle}>Image Description</label>
+                    <input
+                      value={form.imageAlt}
+                      onChange={e => setForm(f => ({ ...f, imageAlt: e.target.value }))}
+                      style={iStyle}
+                      placeholder="Ergonomic workstation assessment in progress"
+                    />
+                  </div>
+                  <div>
+                    <label style={lStyle}>Video URL</label>
+                    <input
+                      type="url"
+                      value={form.videoUrl}
+                      onChange={e => setForm(f => ({ ...f, videoUrl: e.target.value }))}
+                      style={iStyle}
+                      placeholder="YouTube, Vimeo, or direct .mp4 link"
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label style={lStyle}>Media Caption</label>
+                  <input
+                    value={form.mediaCaption}
+                    onChange={e => setForm(f => ({ ...f, mediaCaption: e.target.value }))}
+                    style={iStyle}
+                    placeholder="Short caption for the image or video"
+                  />
+                </div>
+              </div>
+
               <div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.45rem' }}>
                   <label style={{ ...lStyle, marginBottom: 0 }}>Content * (Markdown format)</label>
@@ -640,6 +696,23 @@ export default function BlogAdminPage() {
                   {form.excerpt}
                 </p>
               )}
+              {(form.imageUrl || form.videoUrl) && (
+                <div style={{ marginBottom: '1.5rem' }}>
+                  {form.imageUrl && (
+                    <img src={form.imageUrl} alt={form.imageAlt || form.title || 'Article image'} style={{ width: '100%', maxHeight: 300, objectFit: 'cover', borderRadius: 12, border: '1px solid var(--border)' }} />
+                  )}
+                  {form.videoUrl && (
+                    <div style={{ marginTop: form.imageUrl ? '0.8rem' : 0, borderRadius: 12, overflow: 'hidden', border: '1px solid var(--border)', background: 'var(--forest)', aspectRatio: '16 / 9' }}>
+                      {videoEmbedUrl(form.videoUrl) ? (
+                        <iframe src={videoEmbedUrl(form.videoUrl)} title="Video preview" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen style={{ width: '100%', height: '100%', border: 0, display: 'block' }} />
+                      ) : (
+                        <video src={form.videoUrl} controls style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+                      )}
+                    </div>
+                  )}
+                  {form.mediaCaption && <p style={{ fontSize: '0.78rem', color: 'var(--muted)', marginTop: '0.5rem' }}>{form.mediaCaption}</p>}
+                </div>
+              )}
               <div
                 dangerouslySetInnerHTML={{ __html: parseMarkdown(form.content) || '<p style="color:var(--light)">No content typed yet. Switch back to Editor to compose.</p>' }}
                 style={{ fontSize: '0.92rem', color: 'var(--muted)', lineHeight: 1.8 }}
@@ -715,6 +788,18 @@ export default function BlogAdminPage() {
                           }}>
                             {p.published ? 'Live' : 'Draft'}
                           </span>
+                          {(p.imageUrl || p.videoUrl) && (
+                            <span style={{
+                              fontSize: '0.65rem',
+                              padding: '0.15rem 0.5rem',
+                              borderRadius: 100,
+                              background: 'rgba(0,119,255,0.08)',
+                              color: 'var(--mid)',
+                              fontWeight: 700
+                            }}>
+                              {p.imageUrl && p.videoUrl ? 'Image + Video' : p.imageUrl ? 'Image' : 'Video'}
+                            </span>
+                          )}
                         </div>
                       </div>
 
